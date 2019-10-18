@@ -3,7 +3,7 @@ Section: comm
 Priority: optional
 Maintainer: A. Maitland Bottoms <bottoms@debian.org>
 Build-Depends: cmake,
-               debhelper (>= 12~),
+               debhelper (>= 11~),
                dh-python,
                doxygen,
 	           gir1.2-gtk-3.0,
