@@ -1,9 +1,3 @@
-gnuradio (3.9.0.0git~master~13357~bionic) bionic; urgency=medium
-
-  * master at 218d2c2029a8c4557906bbe55a56292f568f0910 Module name correction for bokehgui
-
- -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 13:35:11 -0400
-
 gnuradio (3.8.0.0~368-6~bionic) bionic; urgency=medium
 
   * Bump to GNU Radio 3.8.0.0-git version
