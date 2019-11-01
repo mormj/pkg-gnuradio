@@ -1,9 +1,3 @@
-gnuradio (3.9.0.0git~master~13355) disco; urgency=medium
-
-  * master at 6fb5f919f0b3cff13e3eb161c73340fed17cf4b9 add set_max_output_buffer to block gateway
-
- -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 11:17:02 -0400
-
 gnuradio (3.8.0.0~368-6~bionic) bionic; urgency=medium
 
   * Bump to GNU Radio 3.8.0.0-git version
