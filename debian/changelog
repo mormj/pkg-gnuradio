@@ -1,21 +1,3 @@
-gnuradio (3.8.0.0~gnuradio~disco-1) disco; urgency=medium
-
-  * gnuradio ppa Release of v3.8.0.0 for disco
-
- -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 13:37:54 -0400
-
-gnuradio (3.8.0.0~gnuradio-3) disco; urgency=medium
-
-  * gnuradio ppa Release of v3.8.0.0
-
- -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 11:33:59 -0400
-
-gnuradio (3.8.0.0~gnuradio-2) disco; urgency=medium
-
-  * gnuradio ppa Release of v3.8.0.0
-
- -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 11:15:00 -0400
-
 gnuradio (3.8.0.0~368-6~bionic) bionic; urgency=medium
 
   * Bump to GNU Radio 3.8.0.0-git version
