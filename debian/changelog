@@ -1,9 +1,3 @@
-gnuradio (3.7.13.5~gnuradio~bionic-1) bionic; urgency=medium
-
-  * gnuradio ppa Release of v3.7.13.5 for bionic
-
- -- Josh Morman <mormjb@gmail.com>  Fri, 08 Nov 2019 22:21:07 -0500
-
 gnuradio (3.7.13.4-4) unstable; urgency=medium
 
   * more hurd-i386 build fixes. Thanks again, Samuel! (Closes: #918481)
