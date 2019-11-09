@@ -26,14 +26,19 @@ debian/gnuradio-dev/usr/include/gnuradio/uhd
 
 <libs>
 debian/libgnuradio-analog/usr/lib/
+debian/libgnuradio-atsc/usr/lib/
 debian/libgnuradio-audio/usr/lib/
 debian/libgnuradio-blocks/usr/lib/
 debian/libgnuradio-channels/usr/lib/
+debian/libgnuradio-comedi/usr/lib/
 debian/libgnuradio-digital/usr/lib/
 debian/libgnuradio-dtv/usr/lib/
 debian/libgnuradio-fec/usr/lib/
+debian/libgnuradio-fcd/usr/lib/
 debian/libgnuradio-filter/usr/lib/
 debian/libgnuradio-fft/usr/lib/
+debian/libgnuradio-noaa/usr/lib/
+debian/libgnuradio-pager/usr/lib/
 debian/libgnuradio-pmt/usr/lib/
 debian/libgnuradio-qtgui/usr/lib/
 debian/libgnuradio-runtime/usr/lib/
@@ -42,6 +47,7 @@ debian/libgnuradio-uhd/usr/lib/
 debian/libgnuradio-video-sdl/usr/lib/
 debian/libgnuradio-vocoder/usr/lib/
 debian/libgnuradio-wavelet/usr/lib/
+debian/libgnuradio-wxgui/usr/lib/
 debian/libgnuradio-zeromq/usr/lib/
 </libs>
 

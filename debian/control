@@ -6,9 +6,6 @@ Build-Depends: cmake,
                debhelper (>= 11~),
                dh-python,
                doxygen,
-	           gir1.2-gtk-3.0,
-	           gir1.2-pango-1.0,
-	           graphviz,
                libasound2-dev,
                libboost-date-time-dev,
                libboost-dev,
@@ -18,52 +15,45 @@ Build-Depends: cmake,
                libboost-system-dev,
                libboost-test-dev,
                libboost-thread-dev,
-               libcodec2-dev (>=0.7),
+               libcodec2-dev (>= 0.8),
+	       libcomedi-dev [!hurd-i386],
                libcppunit-dev (>=1.9.14),
                libfftw3-dev,
                libfontconfig1-dev,
-	           libgmp-dev,
                libgsl-dev (>= 2.0),
                libgsm1-dev,
                libjack-jackd2-dev,
                liblog4cpp5-dev,
                liborc-0.4-dev,
-               libpangocairo-1.0-0,
-               libportaudio2,
                libpulse-dev,
-	           libqwt-qt5-dev,
+	       libqwt-qt5-dev,
                libsdl1.2-dev,
                libsndfile1-dev,
-	           libthrift-dev [amd64 arm64 armel armhf i386],
                libuhd-dev (>=3.10.3) [!hurd-i386],
                libusb-1.0-0-dev [!kfreebsd-any],
                libusb2-dev [kfreebsd-any],
-	           libvolk2-dev,
+	       libvolk1-dev (>=1.3),
                libxi-dev,
                libxrender-dev,
-               libzmq3-dev [!hurd-i386] | libzmq-dev [!hurd-i386],
-	           ninja-build,
-               pkg-config,
+               libzmq3-dev | libzmq-dev,
+               pkg-config (>=0.15.0),
                portaudio19-dev,
-	           python3-click,
-	           python3-click-plugins,
-               python3-dev,
-	           python3-gi,
-	           python3-gi-cairo,
-               python3-lxml,
-               python3-mako,
-               python3-numpy,
-               python3-opengl,
-	           python3-pyqt5 [!hurd-i386],
-               python3-scipy,
-               python3-sphinx,
-	           python3-yaml,
-               python3-zmq [!hurd-i386],
-	           qt5-qmake,
-	           qtbase5-dev,
-	           qttools5-dev,
-               swig (>=3.0.8),
-	           thrift-compiler [amd64 arm64 armel armhf i386],
+               python-cheetah,
+               python-dev,
+	       python-gobject-2-dev,
+	       python-gtk2-dev,	       
+               python-lxml,
+               python-numpy,
+               python-opengl,
+	       python-pyqt5,
+               python-scipy,
+               python-sphinx,
+               python-wxgtk3.0,
+               python-zmq,
+	       qt5-qmake,
+	       qtbase5-dev,
+	       qttools5-dev,
+               swig (>=1.3.31),
                xmlto
 Standards-Version: 4.4.0
 Homepage: http://gnuradio.org/
@@ -72,30 +62,26 @@ Vcs-Git: https://github.com/gnuradio/pkg-gnuradio.git
 
 Package: gnuradio
 Architecture: any
-Depends: libcanberra-gtk-module,
-	 libcanberra-gtk3-module,
-	 libvolk2-bin,
-	 python3-click,
-	 python3-click-plugins,
-	 python3-gi,
-	 python3-gi-cairo,
-     python3-lxml,
-     python3-mako,
-	 python3-numpy,
-     python3-opengl,
-	 python3-pyqt5 [!hurd-i386],
-	 python3-pyqtgraph,
-     python3-sip,
-	 python3-yaml,
-     python3-zmq [!hurd-i386],
-     ${misc:Depends},
-     ${python3:Depends},
-     ${shlibs:Depends}
+Depends: libvolk1-bin,
+         python-cheetah,
+	 python-gobject-2,
+	 python-gtk2,
+         python-lxml,
+	 python-numpy,
+         python-opengl,
+	 python-pyqt5,
+         python-sip,
+         python-wxgtk3.0,
+         python-zmq,
+         ${misc:Depends},
+         ${python:Depends},
+         ${shlibs:Depends}
 Recommends: gnuradio-dev,
-            python3-matplotlib,
-	    python3-networkx,
-            python3-qwt-qt5,
-            python3-scipy,
+            python-matplotlib,
+	    python-networkx,
+            python-qwt-qt5,
+            python-scipy,
+            python-tk,
             rtl-sdr,
             uhd-host
 Suggests: gr-fosphor, gr-osmosdr
@@ -143,18 +129,16 @@ Depends: gnuradio (= ${binary:Version}),
          libboost-date-time-dev,
          libboost-filesystem-dev,
          libboost-program-options-dev,
-         libboost-regex-dev,
          libboost-system-dev,
          libboost-test-dev,
          libboost-thread-dev,
          libcppunit-dev,
          libfftw3-dev,
-	 libgsm1-dev,
          liblog4cpp5-dev,
-         libvolk2-dev,
-         python3-dev,
+         libvolk1-dev,
+         python-dev,
          ${misc:Depends}
-Suggests: cmake, qtbase5-dev, libqwt-qt5-dev, pkg-config, swig
+Suggests: cmake, qtbase5-dev, libqwt-qt5-dev, libvolk1-dev (>=1.3), pkg-config, swig
 Description: GNU Software Defined Radio toolkit development
  Header files for the GNU Radio software defined radio system.
  Since GNU Radio is a framework for development of SDR
@@ -173,6 +157,17 @@ Description: gnuradio analog functions
  These functions are also in gnuradio-core.
  Part of the main gnuradio build.
 
+Package: libgnuradio-atsc3.7.13
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio atsc functions
+ Library for handling ATSC (Advanced Television Systems Committee)
+ signals such as those used for digital television broadcast in North
+ America. Part of the main gnuradio build.
+
 Package: libgnuradio-audio
 Section: libs
 Architecture: any
@@ -185,6 +180,17 @@ Description: gnuradio audio functions
  hardware driver is system and OS dependent and this module should
  automatically discover the correct one to use.  Part of the main
  gnuradio build.
+
+Package: libgnuradio-comedi
+Section: libs
+Architecture: kfreebsd-any linux-any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio comedi instrument control functions
+ Allows gnuradio to use signals from data acquisition hardware
+ supported by the Comedi library and drivers.
+ Part of the main gnuradio build.
 
 Package: libgnuradio-blocks
 Section: libs
@@ -230,6 +236,21 @@ Description: gnuradio digital TV signal processing blocks
  DVB-S2, DVB-T, DVB-T2 digital video broadcast standards.
  Part of the main gnuradio build.
 
+Package: libgnuradio-fcd
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio FunCube Dongle support
+ The Funcube Dongle is a software defined radio
+ receiver in a USB stick covering 64 MHz - 1.7 GHz. More info about the
+ Funcube Dongle is available at http://www.funcubedongle.com/
+ .
+ This library allows the device to be used as a source in GNU Radio.
+ .
+ Part of the main gnuradio build.
+
 Package: libgnuradio-fec
 Section: libs
 Architecture: any
@@ -265,6 +286,29 @@ Description: gnuradio filter functions
  PFB arbitrary resampler methods.
  Part of the main gnuradio build.
 
+Package: libgnuradio-noaa
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio noaa satellite signals functions
+ Library for handling NOAA HRPT (National Oceanic and Atmospheric
+ Administration High Rate Picture Transmission) signals.
+ Part of the main gnuradio build.
+
+Package: libgnuradio-pager
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio pager radio functions
+ Library for handling pager signals, including FLEX radiopager
+ protocol data. FLEX receiving is completed except for addition
+ of BCH error correction
+ Part of the main gnuradio build.
+
 Package: libgnuradio-pmt
 Section: libs
 Architecture: any
@@ -279,7 +323,7 @@ Description: gnuradio pmt container library
 
 Package: libgnuradio-qtgui
 Section: libs
-Architecture: kfreebsd-any linux-any
+Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Multi-Arch: same
@@ -360,9 +404,21 @@ Description: gnuradio wavelet functions
  .
  Part of the main gnuradio build.
 
+Package: libgnuradio-wxgui
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio wxgui functions
+ Graphical user interface support.
+ Plan is to deprecate for eventual removal in 3.9
+ .
+ Part of the main gnuradio build.
+
 Package: libgnuradio-zeromq
 Section: libs
-Architecture: kfreebsd-any linux-any
+Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Multi-Arch: same

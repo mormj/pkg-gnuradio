@@ -2,6 +2,7 @@
 
 for i in \
 create-gnuradio-out-of-tree-project \
+file_rx_hrpt \
 gnuradio-companion \
 gnuradio-config-info \
 gr_filter_design \
@@ -18,6 +19,8 @@ gr_plot_psd_c \
 gr_plot_psd_f \
 gr_plot_qt \
 gr_plot_short \
+hrpt_decode \
+hrpt_demod \
 uhd_fft \
 uhd_rx_cfile \
 uhd_rx_nogui \
@@ -26,6 +29,8 @@ uhd_siggen_gui \
 usrp_flex \
 usrp_flex_all \
 usrp_flex_band \
+usrp_rx_hrpt \
+usrp_rx_hrpt_nogui \
 ; do help2man --no-discard-stderr --version-string=3.5 /usr/bin/$i.py > $i.1 ; done
 
 exit 0
@@ -57,6 +62,7 @@ N:    Severity: normal, Certainty: possible
 N:    
 N:    Check: manpages, Type: binary
 N: 
+W: gnuradio: binary-without-manpage usr/bin/file_rx_hrpt
 W: gnuradio: binary-without-manpage usr/bin/gnuradio-companion
 W: gnuradio: binary-without-manpage usr/bin/gnuradio-config-info
 W: gnuradio: binary-without-manpage usr/bin/gr_filter_design
@@ -73,6 +79,8 @@ W: gnuradio: binary-without-manpage usr/bin/gr_plot_psd_c
 W: gnuradio: binary-without-manpage usr/bin/gr_plot_psd_f
 W: gnuradio: binary-without-manpage usr/bin/gr_plot_qt
 W: gnuradio: binary-without-manpage usr/bin/gr_plot_short
+W: gnuradio: binary-without-manpage usr/bin/hrpt_decode
+W: gnuradio: binary-without-manpage usr/bin/hrpt_demod
 W: gnuradio: binary-without-manpage usr/bin/uhd_fft
 W: gnuradio: binary-without-manpage usr/bin/uhd_rx_cfile
 W: gnuradio: binary-without-manpage usr/bin/uhd_rx_nogui
