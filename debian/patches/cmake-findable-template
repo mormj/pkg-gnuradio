@@ -1,0 +1,104 @@
+--- a/gr-utils/python/modtool/templates/gr-newmod/CMakeLists.txt
++++ b/gr-utils/python/modtool/templates/gr-newmod/CMakeLists.txt
+@@ -94,8 +94,8 @@
+   set(CMAKE_MODULES_DIR lib${LIB_SUFFIX}/cmake)
+ endif(NOT CMAKE_MODULES_DIR)
+ 
+-set(GR_INCLUDE_DIR      include/howto)
+-set(GR_CMAKE_DIR        ${CMAKE_MODULES_DIR}/howto)
++set(GR_INCLUDE_DIR      include/gnuradio/howto)
++set(GR_CMAKE_DIR        ${CMAKE_MODULES_DIR}/gnuradio)
+ set(GR_PKG_DATA_DIR     ${GR_DATA_DIR}/${CMAKE_PROJECT_NAME})
+ set(GR_PKG_DOC_DIR      ${GR_DOC_DIR}/${CMAKE_PROJECT_NAME})
+ set(GR_PKG_CONF_DIR     ${GR_CONF_DIR}/${CMAKE_PROJECT_NAME}/conf.d)
+@@ -163,6 +163,6 @@
+ # Install cmake search helper for this library
+ ########################################################################
+ 
+-install(FILES cmake/Modules/howtoConfig.cmake
+-    DESTINATION ${CMAKE_MODULES_DIR}/howto
++install(FILES cmake/Modules/gnuradio-howtoConfig.cmake
++    DESTINATION ${GR_CMAKE_DIR}
+ )
+--- /dev/null
++++ b/gr-utils/python/modtool/templates/gr-newmod/cmake/Modules/gnuradio-howtoConfig.cmake
+@@ -0,0 +1,3 @@
++include(CMakeFindDependencyMacro)
++find_dependency(Gnuradio 3.8)
++include(\${CMAKE_CURRENT_LIST_DIR}/gnuradio-howtoTargets.cmake)
+--- a/gr-utils/python/modtool/templates/gr-newmod/cmake/Modules/howtoConfig.cmake
++++ /dev/null
+@@ -1,31 +0,0 @@
+-INCLUDE(FindPkgConfig)
+-PKG_CHECK_MODULES(PC_HOWTO howto)
+-
+-FIND_PATH(
+-    HOWTO_INCLUDE_DIRS
+-    NAMES howto/api.h
+-    HINTS $ENV{HOWTO_DIR}/include
+-        ${PC_HOWTO_INCLUDEDIR}
+-    PATHS ${CMAKE_INSTALL_PREFIX}/include
+-          /usr/local/include
+-          /usr/include
+-)
+-
+-FIND_LIBRARY(
+-    HOWTO_LIBRARIES
+-    NAMES gnuradio-howto
+-    HINTS $ENV{HOWTO_DIR}/lib
+-        ${PC_HOWTO_LIBDIR}
+-    PATHS ${CMAKE_INSTALL_PREFIX}/lib
+-          ${CMAKE_INSTALL_PREFIX}/lib64
+-          /usr/local/lib
+-          /usr/local/lib64
+-          /usr/lib
+-          /usr/lib64
+-          )
+-
+-include("${CMAKE_CURRENT_LIST_DIR}/howtoTarget.cmake")
+-
+-INCLUDE(FindPackageHandleStandardArgs)
+-FIND_PACKAGE_HANDLE_STANDARD_ARGS(HOWTO DEFAULT_MSG HOWTO_LIBRARIES HOWTO_INCLUDE_DIRS)
+-MARK_AS_ADVANCED(HOWTO_LIBRARIES HOWTO_INCLUDE_DIRS)
+--- a/gr-utils/python/modtool/templates/gr-newmod/python/CMakeLists.txt
++++ b/gr-utils/python/modtool/templates/gr-newmod/python/CMakeLists.txt
+@@ -32,7 +32,7 @@
+ GR_PYTHON_INSTALL(
+     FILES
+     __init__.py
+-    DESTINATION ${GR_PYTHON_DIR}/howto
++    DESTINATION ${GR_PYTHON_DIR}/gnuradio/howto
+ )
+ 
+ ########################################################################
+--- a/gr-utils/python/modtool/templates/gr-newmod/lib/CMakeLists.txt
++++ b/gr-utils/python/modtool/templates/gr-newmod/lib/CMakeLists.txt
+@@ -36,7 +36,7 @@
+ target_link_libraries(gnuradio-howto gnuradio::gnuradio-runtime)
+ target_include_directories(gnuradio-howto
+     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+-    PUBLIC $<INSTALL_INTERFACE:include>
++    PUBLIC $<INSTALL_INTERFACE:include/gnuradio>
+   )
+ set_target_properties(gnuradio-howto PROPERTIES DEFINE_SYMBOL "gnuradio_howto_EXPORTS")
+ 
+--- a/gr-utils/python/modtool/templates/gr-newmod/include/howto/CMakeLists.txt
++++ b/gr-utils/python/modtool/templates/gr-newmod/include/howto/CMakeLists.txt
+@@ -23,5 +23,5 @@
+ ########################################################################
+ install(FILES
+     api.h
+-    DESTINATION include/howto
++    DESTINATION include/gnuradio/howto
+ )
+--- a/gr-utils/python/modtool/templates/templates.py
++++ b/gr-utils/python/modtool/templates/templates.py
+@@ -547,7 +547,7 @@
+ category: '[${modname}]'
+ 
+ templates:
+-  imports: import ${modname}
++  imports: from gnuradio import ${modname}
+   make: ${modname}.${blockname}(${strip_arg_types_grc(arglist)})
+ 
+ #  Make one 'parameters' list entry for every Parameter you want settable from the GUI.
