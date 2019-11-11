@@ -157,7 +157,7 @@ Description: gnuradio analog functions
  These functions are also in gnuradio-core.
  Part of the main gnuradio build.
 
-Package: libgnuradio-atsc3.7.13
+Package: libgnuradio-atsc
 Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
