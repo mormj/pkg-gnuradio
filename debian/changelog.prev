@@ -1,3 +1,9 @@
+gnuradio (3.9.0.0git~master~13357~disco) disco; urgency=medium
+
+  * master at 218d2c2029a8c4557906bbe55a56292f568f0910 Module name correction for bokehgui
+
+ -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 13:34:22 -0400
+
 gnuradio (3.9.0.0git~master~13355) disco; urgency=medium
 
   * master at 6fb5f919f0b3cff13e3eb161c73340fed17cf4b9 add set_max_output_buffer to block gateway
