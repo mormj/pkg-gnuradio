@@ -3,13 +3,10 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 export DEB_HOST_MULTIARCH
 
 %:
-	dh $@ --with python3 --buildsystem=cmake+ninja
+	dh $@ --with python3
 
 override_dh_auto_configure:
-	dh_auto_configure  --buildsystem=cmake+ninja -- -DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)" -DENABLE_INTERNAL_VOLK=OFF
-
-override_dh_python3:
-	dh_python3 --no-ext-rename
+	dh_auto_configure -- -DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)" -DPYTHON_EXECUTABLE:STRING="/usr/bin/python3" -DENABLE_INTERNAL_VOLK=OFF
 
 override_dh_auto_test:
 	mkdir debian/test
