@@ -1,0 +1,29 @@
+From bfca98ce095f8cdbc5d021bdc33f66b4034644cb Mon Sep 17 00:00:00 2001
+From: Bastian Bloessl <mail@bastibl.net>
+Date: Wed, 14 Aug 2019 15:10:36 +0200
+Subject: [PATCH 11/14] runtime: block gateway shadowed system port
+
+---
+ gnuradio-runtime/include/gnuradio/block_gateway.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/gnuradio-runtime/include/gnuradio/block_gateway.h b/gnuradio-runtime/include/gnuradio/block_gateway.h
+index 960d141b14..57041eb564 100644
+--- a/gnuradio-runtime/include/gnuradio/block_gateway.h
++++ b/gnuradio-runtime/include/gnuradio/block_gateway.h
+@@ -310,7 +310,11 @@ protected:
+ 
+     bool has_msg_handler(pmt::pmt_t which_port)
+     {
+-        return (d_msg_handlers_feval.find(which_port) != d_msg_handlers_feval.end());
++        if (d_msg_handlers_feval.find(which_port) != d_msg_handlers_feval.end()) {
++            return true;
++        } else {
++            return gr::basic_block::has_msg_handler(which_port);
++        }
+     }
+ 
+     void dispatch_msg(pmt::pmt_t which_port, pmt::pmt_t msg)
+-- 
+2.20.1
+

@@ -1,0 +1,59 @@
+From 893f605f0df645b02c5fd6816d563ced4fa4bc54 Mon Sep 17 00:00:00 2001
+From: "luz.paz" <luzpaz@users.noreply.github.com>
+Date: Sat, 10 Aug 2019 11:00:55 -0400
+Subject: [PATCH 07/14] Fix another source typo
+
+---
+ .../include/gnuradio/thrift_application_base.h         | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/gnuradio-runtime/include/gnuradio/thrift_application_base.h b/gnuradio-runtime/include/gnuradio/thrift_application_base.h
+index 343209f0e0..2e62e10a03 100644
+--- a/gnuradio-runtime/include/gnuradio/thrift_application_base.h
++++ b/gnuradio-runtime/include/gnuradio/thrift_application_base.h
+@@ -53,13 +53,13 @@ class thrift_application_base_impl
+ {
+ public:
+     thrift_application_base_impl()
+-        : d_application_initilized(false), d_endpointStr(""), d_start_thrift_thread()
++        : d_application_initialized(false), d_endpointStr(""), d_start_thrift_thread()
+     {
+         ;
+     }
+ 
+     // Used to ensure the Thrift runtime is initialized on the first call to ::i().
+-    bool d_application_initilized;
++    bool d_application_initialized;
+     // Stores the generated endpoint string after the Thrift runtime has initialized.
+     std::string d_endpointStr;
+     // Thread to execute the Thrift runtime's blocking serve() function.
+@@ -212,7 +212,7 @@ void thrift_application_base<TserverBase, TserverClass>::start_application()
+         static_cast<unsigned int>(gr::prefs::singleton()->get_long(
+             "thrift", "init_attempts", d_default_max_init_attempts));
+ 
+-    if (!p_impl->d_application_initilized) {
++    if (!p_impl->d_application_initialized) {
+         p_impl->d_start_thrift_thread.reset((new gr::thread::thread(
+             boost::bind(&thrift_application_base::start_thrift, d_application))));
+ 
+@@ -230,7 +230,7 @@ void thrift_application_base<TserverBase, TserverClass>::start_application()
+                     "timeout waiting to port number might have failed?");
+         }
+ 
+-        p_impl->d_application_initilized = true;
++        p_impl->d_application_initialized = true;
+     }
+ }
+ 
+@@ -254,7 +254,7 @@ void thrift_application_base<TserverBase, TserverClass>::set_endpoint(
+ template <typename TserverBase, typename TserverClass>
+ TserverBase* thrift_application_base<TserverBase, TserverClass>::i()
+ {
+-    if (!p_impl->d_application_initilized) {
++    if (!p_impl->d_application_initialized) {
+         start_application();
+     }
+     return d_application->i_impl();
+-- 
+2.20.1
+

@@ -1,0 +1,26 @@
+From 39c922e8b28eb67515c134712a4bfb0bed3cd1f7 Mon Sep 17 00:00:00 2001
+From: Clayton Smith <argilo@gmail.com>
+Date: Sun, 18 Aug 2019 21:47:13 -0400
+Subject: [PATCH 05/14] Fix a typo in the YAML for Polyphase Channelizer
+
+---
+ gr-filter/grc/filter_pfb_channelizer.block.yml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gr-filter/grc/filter_pfb_channelizer.block.yml b/gr-filter/grc/filter_pfb_channelizer.block.yml
+index c0a800c989..a4ae233dd6 100644
+--- a/gr-filter/grc/filter_pfb_channelizer.block.yml
++++ b/gr-filter/grc/filter_pfb_channelizer.block.yml
+@@ -53,7 +53,8 @@ templates:
+             ${taps},
+             ${osr},
+             ${atten})
+-        self.${id}.set_channel_map(${ch_map})\nself.${id}.declare_sample_delay(${samp_delay})
++        self.${id}.set_channel_map(${ch_map})
++        self.${id}.declare_sample_delay(${samp_delay})
+     callbacks:
+     - set_taps(${taps})
+     - set_channel_map(${ch_map})
+-- 
+2.20.1
+

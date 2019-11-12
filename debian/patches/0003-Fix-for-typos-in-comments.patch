@@ -1,0 +1,328 @@
+From 99d3703316b5e79be0273f02b7bb09037adfb9bb Mon Sep 17 00:00:00 2001
+From: "luz.paz" <luzpaz@users.noreply.github.com>
+Date: Sat, 10 Aug 2019 10:49:32 -0400
+Subject: [PATCH 03/14] Fix for typos in comments
+
+---
+ gr-analog/python/analog/wfm_rcv_fmdet.py       |  2 +-
+ gr-analog/python/analog/wfm_rcv_pll.py         |  2 +-
+ gr-dtv/lib/atsc/atsc_trellis_encoder_impl.cc   |  4 ++--
+ .../lib/dvbt/dvbt_ofdm_sym_acquisition_impl.cc |  2 +-
+ gr-dtv/lib/dvbt/dvbt_reference_signals_impl.h  |  2 +-
+ gr-fft/include/gnuradio/fft/fft_vcc.h          |  2 +-
+ gr-fft/include/gnuradio/fft/fft_vfc.h          |  2 +-
+ gr-qtgui/include/gnuradio/qtgui/freq_sink_c.h  |  2 +-
+ gr-qtgui/include/gnuradio/qtgui/freq_sink_f.h  |  2 +-
+ .../gnuradio/qtgui/time_raster_sink_b.h        |  2 +-
+ .../gnuradio/qtgui/time_raster_sink_f.h        |  2 +-
+ gr-qtgui/include/gnuradio/qtgui/time_sink_c.h  |  2 +-
+ gr-qtgui/include/gnuradio/qtgui/time_sink_f.h  |  2 +-
+ gr-trellis/docs/gr-trellis.xml                 | 14 +++++++-------
+ gr-utils/octave/write_complex_binary.m         |  2 +-
+ gr-utils/python/modtool/core/rename.py         |  2 +-
+ gr-vocoder/examples/cvsd_audio_loopback.py     | 18 +++++++++---------
+ 17 files changed, 32 insertions(+), 32 deletions(-)
+
+diff --git a/gr-analog/python/analog/wfm_rcv_fmdet.py b/gr-analog/python/analog/wfm_rcv_fmdet.py
+index fe91465a3b..e52c9c0687 100644
+--- a/gr-analog/python/analog/wfm_rcv_fmdet.py
++++ b/gr-analog/python/analog/wfm_rcv_fmdet.py
+@@ -115,7 +115,7 @@ class wfm_rcv_fmdet(gr.hier_block2):
+                                       stereo_carrier_filter_coeffs)
+ 
+             # carrier is twice the picked off carrier so arrange to do
+-            # a commplex multiply
++            # a complex multiply
+             self.stereo_carrier_generator = blocks.multiply_cc();
+ 
+             # Pick off the rds signal
+diff --git a/gr-analog/python/analog/wfm_rcv_pll.py b/gr-analog/python/analog/wfm_rcv_pll.py
+index b6ca7fe7c2..3db47a7c7c 100644
+--- a/gr-analog/python/analog/wfm_rcv_pll.py
++++ b/gr-analog/python/analog/wfm_rcv_pll.py
+@@ -106,7 +106,7 @@ class wfm_rcv_pll(gr.hier_block2):
+             self.stereo_carrier_filter = \
+                 filter.fir_filter_fcc(audio_decimation, stereo_carrier_filter_coeffs)
+ 
+-            # carrier is twice the picked off carrier so arrange to do a commplex multiply
++            # carrier is twice the picked off carrier so arrange to do a complex multiply
+ 
+             self.stereo_carrier_generator = blocks.multiply_cc();
+ 
+diff --git a/gr-dtv/lib/atsc/atsc_trellis_encoder_impl.cc b/gr-dtv/lib/atsc/atsc_trellis_encoder_impl.cc
+index d8e2a1235d..1152a1764f 100644
+--- a/gr-dtv/lib/atsc/atsc_trellis_encoder_impl.cc
++++ b/gr-dtv/lib/atsc/atsc_trellis_encoder_impl.cc
+@@ -83,7 +83,7 @@ void atsc_trellis_encoder_impl::encode(atsc_data_segment out[NCODERS],
+     assert(sizeof(in_copy) == sizeof(in[0].data) * NCODERS);
+     assert(sizeof(out_copy) == sizeof(out[0].data) * NCODERS);
+ 
+-    // copy input into continguous temporary buffer
++    // copy input into contiguous temporary buffer
+     for (int i = 0; i < NCODERS; i++) {
+         assert(in[i].pli.regular_seg_p());
+         plinfo::sanity_check(in[i].pli);
+@@ -112,7 +112,7 @@ void atsc_trellis_encoder_impl::encode(atsc_data_segment out[NCODERS],
+ }
+ 
+ /*
+- * This code expects contiguous arrrays. Use it as is, it computes
++ * This code expects contiguous arrays. Use it as is, it computes
+  * the correct answer. Maybe someday, when we've run out of better
+  * things to do, rework to avoid the copying in encode.
+  */
+diff --git a/gr-dtv/lib/dvbt/dvbt_ofdm_sym_acquisition_impl.cc b/gr-dtv/lib/dvbt/dvbt_ofdm_sym_acquisition_impl.cc
+index 7f9dac6515..09b2309dd2 100644
+--- a/gr-dtv/lib/dvbt/dvbt_ofdm_sym_acquisition_impl.cc
++++ b/gr-dtv/lib/dvbt/dvbt_ofdm_sym_acquisition_impl.cc
+@@ -409,7 +409,7 @@ int dvbt_ofdm_sym_acquisition_impl::general_work(int noutput_items,
+             send_sync_start();
+             d_initial_acquisition = 0;
+ 
+-            // Restart wit a half number so that we'll not end up with the same situation
++            // Restart with a half number so that we'll not end up with the same situation
+             // This will prevent peak_detect to not detect anything
+             d_to_consume = d_to_consume / 2;
+             d_consumed += d_to_consume;
+diff --git a/gr-dtv/lib/dvbt/dvbt_reference_signals_impl.h b/gr-dtv/lib/dvbt/dvbt_reference_signals_impl.h
+index e5c784b805..04eded8be7 100644
+--- a/gr-dtv/lib/dvbt/dvbt_reference_signals_impl.h
++++ b/gr-dtv/lib/dvbt/dvbt_reference_signals_impl.h
+@@ -218,7 +218,7 @@ public:
+      * TODO
+      * ETSI EN 300 744 Clause 4.5. \n
+      * Extract data from a set of carriers using pilot signals. \n
+-     * This is doing frequency correcton, equalization. \n
++     * This is doing frequency correction, equalization. \n
+      */
+     int parse_input(const gr_complex* in,
+                     gr_complex* out,
+diff --git a/gr-fft/include/gnuradio/fft/fft_vcc.h b/gr-fft/include/gnuradio/fft/fft_vcc.h
+index a10398465e..e366367835 100644
+--- a/gr-fft/include/gnuradio/fft/fft_vcc.h
++++ b/gr-fft/include/gnuradio/fft/fft_vcc.h
+@@ -51,7 +51,7 @@ namespace fft {
+  * \f$N-1\f$.
+  *
+  * \b Note, that due to the underlying FFTW library, the output of a FFT
+- * followed by an IFFT (or the other way arround) will be scaled i.e.
++ * followed by an IFFT (or the other way around) will be scaled i.e.
+  * \f$FFT\{ \, IFFT\{x\} \,\} =  N \cdot x \neq x\f$.
+  *
+  * \see http://www.fftw.org/faq/section3.html#whyscaled
+diff --git a/gr-fft/include/gnuradio/fft/fft_vfc.h b/gr-fft/include/gnuradio/fft/fft_vfc.h
+index 8b194ec8e3..ce6fc478c3 100644
+--- a/gr-fft/include/gnuradio/fft/fft_vfc.h
++++ b/gr-fft/include/gnuradio/fft/fft_vfc.h
+@@ -51,7 +51,7 @@ namespace fft {
+  * \f$N-1\f$.
+  *
+  * \b Note, that due to the underlying FFTW library, the output of a FFT
+- * followed by an IFFT (or the other way arround) will be scaled i.e.
++ * followed by an IFFT (or the other way around) will be scaled i.e.
+  * \f$FFT\{ \, IFFT\{x\} \,\} =  N \cdot x \neq x\f$.
+  *
+  * \see http://www.fftw.org/faq/section3.html#whyscaled
+diff --git a/gr-qtgui/include/gnuradio/qtgui/freq_sink_c.h b/gr-qtgui/include/gnuradio/qtgui/freq_sink_c.h
+index d172e49599..ffcf30790f 100644
+--- a/gr-qtgui/include/gnuradio/qtgui/freq_sink_c.h
++++ b/gr-qtgui/include/gnuradio/qtgui/freq_sink_c.h
+@@ -45,7 +45,7 @@ namespace qtgui {
+  * This is a QT-based graphical sink the takes set of a complex
+  * streams and plots the PSD. Each signal is plotted with a
+  * different color, and the \a set_title and \a set_color
+- * functions can be used to change the lable and color for a given
++ * functions can be used to change the label and color for a given
+  * input number.
+  *
+  * The sink supports plotting streaming complex data or
+diff --git a/gr-qtgui/include/gnuradio/qtgui/freq_sink_f.h b/gr-qtgui/include/gnuradio/qtgui/freq_sink_f.h
+index 81be9a6874..19383197e2 100644
+--- a/gr-qtgui/include/gnuradio/qtgui/freq_sink_f.h
++++ b/gr-qtgui/include/gnuradio/qtgui/freq_sink_f.h
+@@ -45,7 +45,7 @@ namespace qtgui {
+  * This is a QT-based graphical sink the takes set of a floating
+  * point streams and plots the PSD. Each signal is plotted with a
+  * different color, and the \a set_title and \a set_color
+- * functions can be used to change the lable and color for a given
++ * functions can be used to change the label and color for a given
+  * input number.
+  *
+  * The sink supports plotting streaming float data or
+diff --git a/gr-qtgui/include/gnuradio/qtgui/time_raster_sink_b.h b/gr-qtgui/include/gnuradio/qtgui/time_raster_sink_b.h
+index 24e2421998..dfe7cfa523 100644
+--- a/gr-qtgui/include/gnuradio/qtgui/time_raster_sink_b.h
++++ b/gr-qtgui/include/gnuradio/qtgui/time_raster_sink_b.h
+@@ -98,7 +98,7 @@ public:
+ 
+     virtual void set_update_time(double t) = 0;
+     virtual void set_title(const std::string& title) = 0;
+-    virtual void set_line_label(unsigned int which, const std::string& lable) = 0;
++    virtual void set_line_label(unsigned int which, const std::string& label) = 0;
+     virtual void set_line_color(unsigned int which, const std::string& color) = 0;
+     virtual void set_line_width(unsigned int which, int width) = 0;
+     virtual void set_line_style(unsigned int which, Qt::PenStyle style) = 0;
+diff --git a/gr-qtgui/include/gnuradio/qtgui/time_raster_sink_f.h b/gr-qtgui/include/gnuradio/qtgui/time_raster_sink_f.h
+index 67683bb715..a6056ba63c 100644
+--- a/gr-qtgui/include/gnuradio/qtgui/time_raster_sink_f.h
++++ b/gr-qtgui/include/gnuradio/qtgui/time_raster_sink_f.h
+@@ -94,7 +94,7 @@ public:
+ 
+     virtual void set_update_time(double t) = 0;
+     virtual void set_title(const std::string& title) = 0;
+-    virtual void set_line_label(unsigned int which, const std::string& lable) = 0;
++    virtual void set_line_label(unsigned int which, const std::string& label) = 0;
+     virtual void set_line_color(unsigned int which, const std::string& color) = 0;
+     virtual void set_line_width(unsigned int which, int width) = 0;
+     virtual void set_line_style(unsigned int which, Qt::PenStyle style) = 0;
+diff --git a/gr-qtgui/include/gnuradio/qtgui/time_sink_c.h b/gr-qtgui/include/gnuradio/qtgui/time_sink_c.h
+index 9c58a28f90..f64d0721a6 100644
+--- a/gr-qtgui/include/gnuradio/qtgui/time_sink_c.h
++++ b/gr-qtgui/include/gnuradio/qtgui/time_sink_c.h
+@@ -45,7 +45,7 @@ namespace qtgui {
+  * streams and plots them in the time domain. For each signal, both
+  * the signal's I and Q parts are plotted, and they are all plotted
+  * with a different color, and the \a set_title and \a set_color
+- * functions can be used to change the lable and color for a given
++ * functions can be used to change the label and color for a given
+  * input number.
+  *
+  * The sink supports plotting streaming complex data or
+diff --git a/gr-qtgui/include/gnuradio/qtgui/time_sink_f.h b/gr-qtgui/include/gnuradio/qtgui/time_sink_f.h
+index 62d737dc32..4e8feb5894 100644
+--- a/gr-qtgui/include/gnuradio/qtgui/time_sink_f.h
++++ b/gr-qtgui/include/gnuradio/qtgui/time_sink_f.h
+@@ -44,7 +44,7 @@ namespace qtgui {
+  * This is a QT-based graphical sink the takes set of a float streams
+  * and plots them in the time domain. Each signal is plotted with a
+  * different color, and the \a set_title and \a set_color functions
+- * can be used to change the lable and color for a given input number.
++ * can be used to change the label and color for a given input number.
+  *
+  * The sink supports plotting streaming float data or
+  * messages. The message port is named "in". The two modes cannot
+diff --git a/gr-trellis/docs/gr-trellis.xml b/gr-trellis/docs/gr-trellis.xml
+index aabf9ad535..cc645d458e 100644
+--- a/gr-trellis/docs/gr-trellis.xml
++++ b/gr-trellis/docs/gr-trellis.xml
+@@ -52,7 +52,7 @@ convolutional
+ code (CC), a trellis code (TC), an inter-symbol interference (ISI)
+ channel, or any
+ other communication system that can be modeled with an FSM.
+-To achieve this goal, we need to separate the pure FSM descrition from the
++To achieve this goal, we need to separate the pure FSM description from the
+ rest of the model details. For instance, in the case of a rate 2/3 TC,
+ the FSM should not involve details about the modulation used (it can
+ be an 8-ary PAM, or 8-PSK, etc). Similarly, when attempting maximum likelihood
+@@ -272,7 +272,7 @@ y<subscript>j</subscript> (e.g., in the above example y<subscript>j</subscript>(
+ 
+ <listitem>
+ <para>
+-The fourth way is specific to FSMs resulting from shift registers, and the output symbol being the entire transition (ie, current_state and current_input). These FSMs are usefull when describibg ISI channels. In particular the state is comprised of the input symbols x(k-1), x(k-2),...,x(k-L), where L = ch_length-1 and each x(i) belongs to an alphabet of size mod_size. The output is taken to be x(k), x(k-1), x(k-2),...,x(k-L) (in decimal format)
++The fourth way is specific to FSMs resulting from shift registers, and the output symbol being the entire transition (ie, current_state and current_input). These FSMs are useful when describing ISI channels. In particular the state is comprised of the input symbols x(k-1), x(k-2),...,x(k-L), where L = ch_length-1 and each x(i) belongs to an alphabet of size mod_size. The output is taken to be x(k), x(k-1), x(k-2),...,x(k-L) (in decimal format)
+ </para>
+ <programlisting>
+   fsm(const int mod_size, const int ch_length);
+@@ -365,7 +365,7 @@ The output of this block is a sequence of K bytes, shorts or integers representi
+ The input is a sequence of K x FSM.O( ) floats, where the k x K + i
+ float represents the cost associated with the k-th
+ step in the trellis and the i-th FSM output.
+-Observe that these inputs are generated externally and thus the Viterbi block is not informed of their meaning (they can be genarated as soft or hard inputs, etc); the only requirement is that they represent additive costs.
++Observe that these inputs are generated externally and thus the Viterbi block is not informed of their meaning (they can be generated as soft or hard inputs, etc); the only requirement is that they represent additive costs.
+ </para>
+ </sect2>
+ 
+@@ -393,7 +393,7 @@ evaluates
+ ||r<subscript>k</subscript>-c<subscript>i</subscript>||<superscript>2</superscript> = sum<subscript>j=1</subscript><superscript>D</superscript> |r<subscript>k,j</subscript>-c<subscript>i,j</subscript>|<superscript>2</superscript>
+ </para>
+ <para>
+-for each of the O hypothesized ouput
++for each of the O hypothesized output
+ symbols c<subscript>i</subscript> = (c<subscript>i,1</subscript>,c<subscript>i,2</subscript>,...,c<subscript>i,D</subscript>) defined in the vector TABLE,
+ where TABLE[i * D + j] = c<subscript>i,j</subscript>.
+ </para></listitem>
+@@ -446,7 +446,7 @@ d<subscript>i</subscript> is the bitwise Hamming distance between i and  i<subsc
+ Although the separation of metric calculation and Viterbi algorithm blocks
+ is consistent with our goal of providing general blocks that can be easily
+ reused, this separation might result in large input/output buffer sizes
+-betwen blocks. Indeed for an FSM with a large output alphabet, the
++between blocks. Indeed for an FSM with a large output alphabet, the
+ output of the metric block/input of the Viterbi block is FSM.O( ) floats for
+ each trellis step. Sometimes this results in buffer overflow even for
+ moderate sequence lengths.
+@@ -522,7 +522,7 @@ symbols that will drive the FSM encoder.
+ 
+ 
+ <para>
+-The FSM will produce K output symbols (remeber the FSM produces always one output symbol for each input symbol). Each of these symbols needs to be modulated. Since we are simulating the communication system, we need not simulate the actual waveforms. An M-ary, D-dimensional
++The FSM will produce K output symbols (remember the FSM produces always one output symbol for each input symbol). Each of these symbols needs to be modulated. Since we are simulating the communication system, we need not simulate the actual waveforms. An M-ary, D-dimensional
+ modulation is completely specified by a set of M, D-dimensional real vectors. In "fsm_utils.py" file we give a number of useful modulations with the following format: modulation = (D,constellation), where
+ constellation=[c11,c12,...,c1D,c21,c22,...,c2D,...,cM1,cM2,...cMD].
+ The meaning of the above is that every constellation point c_i
+@@ -882,7 +882,7 @@ Although these can be generated by existing gr-trellis blocks (in particular,
+ the SISO blocks, as done in some of the python examples) there is an advantage
+ in having this functionality as a single block. To see why, think of a turbo decoder with 10 iterations. Previously we needed to concatenate 10 x 2 SISO blocks
+ (for a sccc decoder) to emulate the passing of soft information between SISOs over 10 iterartions. With the new block however, only a single such block is needed that internally loops through 10 iterations; this results in space savings
+-and possibly time saving as well (since queueing at the input/ouput of the gr-blocks is avoided).
++and possibly time saving as well (since queueing at the input/output of the gr-blocks is avoided).
+ 
+ 
+ Still need to document them...
+diff --git a/gr-utils/octave/write_complex_binary.m b/gr-utils/octave/write_complex_binary.m
+index 22d62dd209..4a7a20d8ef 100644
+--- a/gr-utils/octave/write_complex_binary.m
++++ b/gr-utils/octave/write_complex_binary.m
+@@ -26,7 +26,7 @@ function v = write_complex_binary (data, filename)
+   %%  open filename and write data to it
+   %%  Format is interleaved float IQ e.g. each
+   %%  I,Q 32-bit float IQIQIQ....
+-  %%  This is compatabile with read_complex_binary()
++  %%  This is compatible with read_complex_binary()
+   %%
+ 
+   m = nargchk (2,2,nargin);
+diff --git a/gr-utils/python/modtool/core/rename.py b/gr-utils/python/modtool/core/rename.py
+index aa8d88ee96..9974ba2c70 100644
+--- a/gr-utils/python/modtool/core/rename.py
++++ b/gr-utils/python/modtool/core/rename.py
+@@ -175,7 +175,7 @@ class ModToolRename(ModTool):
+         if not os.path.isfile(filename):
+             return False
+         else:
+-            logger.info("In '{}' renaming occurences of '{}' to '{}'".format(filename, old, new))
++            logger.info("In '{}' renaming occurrences of '{}' to '{}'".format(filename, old, new))
+ 
+         with open(filename) as f:
+             cfile = f.read()
+diff --git a/gr-vocoder/examples/cvsd_audio_loopback.py b/gr-vocoder/examples/cvsd_audio_loopback.py
+index 15074d62cd..0fc7cc5577 100644
+--- a/gr-vocoder/examples/cvsd_audio_loopback.py
++++ b/gr-vocoder/examples/cvsd_audio_loopback.py
+@@ -52,15 +52,15 @@ def build_graph():
+     tb.connect(enc, dec, s2f, decim, sink_scale, sink)
+ 
+     if 0: # debug
+-        tb.conect(src, blocks.file_sink(gr.sizeof_float, "source.dat"))
+-        tb.conect(src_scale, blocks.file_sink(gr.sizeof_float, "src_scale.dat"))
+-        tb.conect(interp, blocks.file_sink(gr.sizeof_float, "interp.dat"))
+-        tb.conect(f2s, blocks.file_sink(gr.sizeof_short, "f2s.dat"))
+-        tb.conect(enc, blocks.file_sink(gr.sizeof_char,  "enc.dat"))
+-        tb.conect(dec, blocks.file_sink(gr.sizeof_short, "dec.dat"))
+-        tb.conect(s2f, blocks.file_sink(gr.sizeof_float, "s2f.dat"))
+-        tb.conect(decim, blocks.file_sink(gr.sizeof_float, "decim.dat"))
+-        tb.conect(sink_scale, blocks.file_sink(gr.sizeof_float, "sink_scale.dat"))
++        tb.connect(src, blocks.file_sink(gr.sizeof_float, "source.dat"))
++        tb.connect(src_scale, blocks.file_sink(gr.sizeof_float, "src_scale.dat"))
++        tb.connect(interp, blocks.file_sink(gr.sizeof_float, "interp.dat"))
++        tb.connect(f2s, blocks.file_sink(gr.sizeof_short, "f2s.dat"))
++        tb.connect(enc, blocks.file_sink(gr.sizeof_char,  "enc.dat"))
++        tb.connect(dec, blocks.file_sink(gr.sizeof_short, "dec.dat"))
++        tb.connect(s2f, blocks.file_sink(gr.sizeof_float, "s2f.dat"))
++        tb.connect(decim, blocks.file_sink(gr.sizeof_float, "decim.dat"))
++        tb.connect(sink_scale, blocks.file_sink(gr.sizeof_float, "sink_scale.dat"))
+ 
+     return tb
+ 
+-- 
+2.20.1
+
