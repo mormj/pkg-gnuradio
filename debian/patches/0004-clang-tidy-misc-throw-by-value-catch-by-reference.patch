@@ -1,0 +1,57 @@
+From 6db0d21a6db5b39ab285c88d8801a54938d8cd56 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Anders=20Kal=C3=B8r?= <anders@kaloer.com>
+Date: Wed, 14 Aug 2019 19:42:24 +0200
+Subject: [PATCH 04/14] clang-tidy: misc-throw-by-value-catch-by-reference
+
+Exceptions should be thrown by value and caught by reference.
+Closes #2708
+---
+ gnuradio-runtime/lib/block_detail.cc | 3 +--
+ gnuradio-runtime/lib/prefs.cc        | 2 +-
+ gr-uhd/lib/usrp_block_impl.cc        | 2 +-
+ 3 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/gnuradio-runtime/lib/block_detail.cc b/gnuradio-runtime/lib/block_detail.cc
+index fb90995343..78b3dff20e 100644
+--- a/gnuradio-runtime/lib/block_detail.cc
++++ b/gnuradio-runtime/lib/block_detail.cc
+@@ -231,9 +231,8 @@ void block_detail::set_processor_affinity(const std::vector<int>& mask)
+     if (threaded) {
+         try {
+             gr::thread::thread_bind_to_processor(thread, mask);
+-        } catch (std::runtime_error e) {
++        } catch (std::runtime_error& e) {
+             std::cerr << "set_processor_affinity: invalid mask." << std::endl;
+-            ;
+         }
+     }
+ }
+diff --git a/gnuradio-runtime/lib/prefs.cc b/gnuradio-runtime/lib/prefs.cc
+index a17e51bbef..f59a2346f7 100644
+--- a/gnuradio-runtime/lib/prefs.cc
++++ b/gnuradio-runtime/lib/prefs.cc
+@@ -110,7 +110,7 @@ void prefs::_read_files(const std::vector<std::string>& filenames)
+                     std::string value = o.value[0];
+                     d_config_map[section][key] = value;
+                 }
+-            } catch (std::exception e) {
++            } catch (std::exception& e) {
+                 std::cerr << "WARNING: Config file '" << fname
+                           << "' failed to parse:" << std::endl;
+                 std::cerr << e.what() << std::endl;
+diff --git a/gr-uhd/lib/usrp_block_impl.cc b/gr-uhd/lib/usrp_block_impl.cc
+index 8b60a4338a..1aa17bf3ca 100644
+--- a/gr-uhd/lib/usrp_block_impl.cc
++++ b/gr-uhd/lib/usrp_block_impl.cc
+@@ -238,7 +238,7 @@ bool usrp_block_impl::_unpack_chan_command(std::string& command,
+         } else {
+             return false;
+         }
+-    } catch (pmt::wrong_type w) {
++    } catch (pmt::wrong_type& w) {
+         return false;
+     }
+     return true;
+-- 
+2.20.1
+

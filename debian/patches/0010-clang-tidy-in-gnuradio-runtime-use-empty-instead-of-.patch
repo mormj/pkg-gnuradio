@@ -1,0 +1,1240 @@
+From 31eaea39d034a8e7e83dfe2f2b683d41f410ed39 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marcus=20M=C3=BCller?= <mmueller@gnuradio.org>
+Date: Sat, 17 Aug 2019 20:32:20 +0200
+Subject: [PATCH 10/14] clang-tidy in gnuradio-runtime: use empty() instead of
+ size()!=0
+
+---
+ .clang-tidy                                       |  2 +-
+ gnuradio-runtime/apps/gnuradio-config-info.cc     |  2 +-
+ gnuradio-runtime/include/gnuradio/tag_checker.h   |  2 +-
+ gnuradio-runtime/lib/block_executor.cc            |  8 +++++---
+ gnuradio-runtime/lib/flowgraph.cc                 |  4 ++--
+ gnuradio-runtime/lib/hier_block2.cc               | 15 +++++++++------
+ gnuradio-runtime/lib/hier_block2_detail.cc        |  4 ++--
+ gnuradio-runtime/lib/io_signature.cc              |  3 ++-
+ gnuradio-runtime/lib/logger.cc                    |  8 ++++----
+ gnuradio-runtime/lib/prefs.cc                     |  6 +++---
+ gnuradio-runtime/lib/tpb_thread_body.cc           |  4 ++--
+ gr-blocks/lib/file_meta_source_impl.cc            |  2 +-
+ gr-blocks/lib/multiply_matrix_impl.cc             |  2 +-
+ gr-blocks/lib/qa_gr_flowgraph.cc                  |  4 ++--
+ gr-blocks/lib/tag_debug_impl.cc                   |  4 ++--
+ gr-blocks/lib/tag_gate_impl.cc                    |  2 +-
+ gr-blocks/lib/tagged_file_sink_impl.cc            |  4 ++--
+ gr-blocks/lib/tagged_stream_align_impl.cc         |  2 +-
+ gr-blocks/lib/udp_sink_impl.cc                    |  2 +-
+ gr-blocks/lib/udp_source_impl.cc                  |  2 +-
+ gr-blocks/lib/vector_source_impl.cc               |  4 ++--
+ gr-digital/lib/constellation.cc                   |  4 ++--
+ gr-digital/lib/costas_loop_cc_impl.cc             |  2 +-
+ gr-digital/lib/hdlc_framer_pb_impl.cc             |  2 +-
+ gr-digital/lib/msk_timing_recovery_cc_impl.cc     |  2 +-
+ gr-digital/lib/ofdm_chanest_vcvc_impl.cc          |  8 ++++----
+ gr-digital/lib/ofdm_equalizer_base.cc             |  4 ++--
+ gr-digital/lib/pfb_clock_sync_ccf_impl.cc         |  4 ++--
+ gr-digital/lib/pfb_clock_sync_fff_impl.cc         |  2 +-
+ .../dvbt/dvbt_convolutional_deinterleaver_impl.cc |  2 +-
+ .../lib/dvbt/dvbt_demod_reference_signals_impl.cc |  2 +-
+ gr-dtv/lib/dvbt/dvbt_viterbi_decoder_impl.cc      |  2 +-
+ gr-fec/lib/conv_bit_corr_bb_impl.h                |  2 +-
+ gr-fec/lib/generic_decoder.cc                     |  2 +-
+ gr-fec/lib/generic_encoder.cc                     |  2 +-
+ gr-fft/lib/fft_vcc_fftw.cc                        |  4 ++--
+ gr-fft/lib/fft_vfc_fftw.cc                        |  4 ++--
+ gr-filter/lib/fft_filter.cc                       |  6 +++---
+ gr-filter/lib/interp_fir_filter_impl.cc           |  2 +-
+ gr-filter/lib/pfb_channelizer_ccf_impl.cc         |  2 +-
+ gr-filter/lib/pfb_synthesizer_ccf_impl.cc         |  2 +-
+ gr-filter/lib/pm_remez.cc                         |  2 +-
+ gr-qtgui/lib/TimeDomainDisplayPlot.cc             |  2 +-
+ gr-qtgui/lib/ber_sink_b_impl.cc                   |  2 +-
+ gr-qtgui/lib/const_sink_c_impl.cc                 |  4 ++--
+ gr-qtgui/lib/edit_box_msg_impl.cc                 |  4 ++--
+ gr-qtgui/lib/freq_sink_c_impl.cc                  |  6 +++---
+ gr-qtgui/lib/freq_sink_f_impl.cc                  |  6 +++---
+ gr-qtgui/lib/freqdisplayform.cc                   |  2 +-
+ gr-qtgui/lib/histogram_sink_f_impl.cc             |  2 +-
+ gr-qtgui/lib/qtgui_util.cc                        |  2 +-
+ gr-qtgui/lib/sink_c_impl.cc                       |  2 +-
+ gr-qtgui/lib/sink_f_impl.cc                       |  2 +-
+ gr-qtgui/lib/spectrumdisplayform.cc               |  2 +-
+ gr-qtgui/lib/time_raster_sink_b_impl.cc           |  6 +++---
+ gr-qtgui/lib/time_raster_sink_f_impl.cc           |  6 +++---
+ gr-qtgui/lib/time_sink_c_impl.cc                  |  4 ++--
+ gr-qtgui/lib/time_sink_f_impl.cc                  |  4 ++--
+ gr-qtgui/lib/timedisplayform.cc                   |  2 +-
+ gr-qtgui/lib/waterfall_sink_c_impl.cc             |  4 ++--
+ gr-qtgui/lib/waterfall_sink_f_impl.cc             |  4 ++--
+ 61 files changed, 110 insertions(+), 104 deletions(-)
+
+diff --git a/.clang-tidy b/.clang-tidy
+index a9c77731da..0b7fa8ed53 100644
+--- a/.clang-tidy
++++ b/.clang-tidy
+@@ -1,5 +1,5 @@
+ ---
+-Checks:          '-*,misc-throw-by-value-catch-by-reference,misc-static-assert'
++Checks:          '-*,misc-throw-by-value-catch-by-reference,misc-static-assert,readability-container-size-empty'
+ # Not in here: modernize-use-emplace, since that basically broke all things it touched
+ WarningsAsErrors: ''
+ HeaderFilterRegex: '\.(cc|c|cpp|h|hpp)$'
+diff --git a/gnuradio-runtime/apps/gnuradio-config-info.cc b/gnuradio-runtime/apps/gnuradio-config-info.cc
+index 9ed8cac459..8e6fbba8ff 100644
+--- a/gnuradio-runtime/apps/gnuradio-config-info.cc
++++ b/gnuradio-runtime/apps/gnuradio-config-info.cc
+@@ -61,7 +61,7 @@ int main(int argc, char** argv)
+         return 1;
+     }
+ 
+-    if (vm.size() == 0 || vm.count("help")) {
++    if (vm.empty() || vm.count("help")) {
+         std::cout << desc << std::endl;
+         return 1;
+     }
+diff --git a/gnuradio-runtime/include/gnuradio/tag_checker.h b/gnuradio-runtime/include/gnuradio/tag_checker.h
+index d7cf0bf7c7..b7fd2bf2df 100644
+--- a/gnuradio-runtime/include/gnuradio/tag_checker.h
++++ b/gnuradio-runtime/include/gnuradio/tag_checker.h
+@@ -41,7 +41,7 @@ public:
+     {
+         d_tags = tags;
+         std::sort(d_tags.begin(), d_tags.end(), &gr::tag_t::offset_compare);
+-        if (d_tags.size() > 0) {
++        if (!d_tags.empty()) {
+             d_has_next_tag = true;
+             d_next_tag = tags[0];
+         }
+diff --git a/gnuradio-runtime/lib/block_executor.cc b/gnuradio-runtime/lib/block_executor.cc
+index eb08c84de4..97e163b683 100644
+--- a/gnuradio-runtime/lib/block_executor.cc
++++ b/gnuradio-runtime/lib/block_executor.cc
+@@ -124,10 +124,11 @@ static bool propagate_tags(block::tag_propagation_policy_t policy,
+             d->get_tags_in_range(
+                 rtags, i, start_nitems_read[i], d->nitems_read(i), block_id);
+ 
+-            if (rtags.size() == 0)
++            if (rtags.empty()) {
+                 continue;
++            }
+ 
+-            if (out_buf.size() == 0) {
++            if (out_buf.empty()) {
+                 out_buf.reserve(d->noutputs());
+                 for (int o = 0; o < d->noutputs(); o++)
+                     out_buf.push_back(d->output(o));
+@@ -176,8 +177,9 @@ static bool propagate_tags(block::tag_propagation_policy_t policy,
+                 d->get_tags_in_range(
+                     rtags, i, start_nitems_read[i], d->nitems_read(i), block_id);
+ 
+-                if (rtags.size() == 0)
++                if (rtags.empty()) {
+                     continue;
++                }
+ 
+                 out_buf = d->output(i);
+ 
+diff --git a/gnuradio-runtime/lib/flowgraph.cc b/gnuradio-runtime/lib/flowgraph.cc
+index 11c816f79f..435611f599 100644
+--- a/gnuradio-runtime/lib/flowgraph.cc
++++ b/gnuradio-runtime/lib/flowgraph.cc
+@@ -328,7 +328,7 @@ std::vector<basic_block_vector_t> flowgraph::partition()
+     basic_block_vector_t blocks = calc_used_blocks();
+     basic_block_vector_t graph;
+ 
+-    while (blocks.size() > 0) {
++    while (!blocks.empty()) {
+         graph = calc_reachable_blocks(blocks[0], blocks);
+         assert(graph.size());
+         result.push_back(topological_sort(graph));
+@@ -432,7 +432,7 @@ basic_block_vector_t flowgraph::sort_sources_first(basic_block_vector_t& blocks)
+ 
+ bool flowgraph::source_p(basic_block_sptr block)
+ {
+-    return (calc_upstream_edges(block).size() == 0);
++    return calc_upstream_edges(block).empty();
+ }
+ 
+ void flowgraph::topological_dfs_visit(basic_block_sptr block,
+diff --git a/gnuradio-runtime/lib/hier_block2.cc b/gnuradio-runtime/lib/hier_block2.cc
+index 755977c841..4f98e66af9 100644
+--- a/gnuradio-runtime/lib/hier_block2.cc
++++ b/gnuradio-runtime/lib/hier_block2.cc
+@@ -171,9 +171,10 @@ int hier_block2::max_output_buffer(size_t port)
+ void hier_block2::set_max_output_buffer(int max_output_buffer)
+ {
+     if (output_signature()->max_streams() > 0) {
+-        if (d_detail->d_max_output_buffer.size() == 0)
++        if (d_detail->d_max_output_buffer.empty()) {
+             throw std::length_error("hier_block2::set_max_output_buffer(int): out_sig "
+                                     "greater than zero, buff_vect isn't");
++        }
+         for (int idx = 0; idx < output_signature()->max_streams(); idx++) {
+             d_detail->d_max_output_buffer[idx] = max_output_buffer;
+         }
+@@ -182,10 +183,10 @@ void hier_block2::set_max_output_buffer(int max_output_buffer)
+ 
+ void hier_block2::set_max_output_buffer(size_t port, int max_output_buffer)
+ {
+-    if (port >= d_detail->d_max_output_buffer.size())
++    if (port >= d_detail->d_max_output_buffer.size()) {
+         throw std::invalid_argument(
+             "hier_block2::set_max_output_buffer(size_t,int): port out of range.");
+-    else {
++    } else {
+         d_detail->d_max_output_buffer[port] = max_output_buffer;
+     }
+ }
+@@ -201,9 +202,10 @@ int hier_block2::min_output_buffer(size_t port)
+ void hier_block2::set_min_output_buffer(int min_output_buffer)
+ {
+     if (output_signature()->max_streams() > 0) {
+-        if (d_detail->d_min_output_buffer.size() == 0)
++        if (d_detail->d_min_output_buffer.empty()) {
+             throw std::length_error("hier_block2::set_min_output_buffer(int): out_sig "
+                                     "greater than zero, buff_vect isn't");
++        }
+         for (int idx = 0; idx < output_signature()->max_streams(); idx++) {
+             d_detail->d_min_output_buffer[idx] = min_output_buffer;
+         }
+@@ -222,8 +224,9 @@ void hier_block2::set_min_output_buffer(size_t port, int min_output_buffer)
+ 
+ bool hier_block2::all_min_output_buffer_p(void)
+ {
+-    if (!d_detail->d_min_output_buffer.size())
++    if (d_detail->d_min_output_buffer.empty()) {
+         return false;
++    }
+     for (size_t idx = 1; idx < d_detail->d_min_output_buffer.size(); idx++) {
+         if (d_detail->d_min_output_buffer[0] != d_detail->d_min_output_buffer[idx])
+             return false;
+@@ -232,7 +235,7 @@ bool hier_block2::all_min_output_buffer_p(void)
+ }
+ bool hier_block2::all_max_output_buffer_p(void)
+ {
+-    if (!d_detail->d_max_output_buffer.size())
++    if (d_detail->d_max_output_buffer.empty())
+         return false;
+     for (size_t idx = 1; idx < d_detail->d_max_output_buffer.size(); idx++) {
+         if (d_detail->d_max_output_buffer[0] != d_detail->d_max_output_buffer[idx])
+diff --git a/gnuradio-runtime/lib/hier_block2_detail.cc b/gnuradio-runtime/lib/hier_block2_detail.cc
+index 59f290bf99..0e06c07e31 100644
+--- a/gnuradio-runtime/lib/hier_block2_detail.cc
++++ b/gnuradio-runtime/lib/hier_block2_detail.cc
+@@ -288,7 +288,7 @@ void hier_block2_detail::disconnect(basic_block_sptr block)
+         }
+     }
+ 
+-    if (edges.size() == 0) {
++    if (edges.empty()) {
+         std::stringstream msg;
+         msg << "cannot disconnect block " << block << ", not found";
+         throw std::invalid_argument(msg.str());
+@@ -784,7 +784,7 @@ void hier_block2_detail::flatten_aux(flat_flowgraph_sptr sfg) const
+     // Now add the list of connected input blocks
+     std::stringstream msg;
+     for (unsigned int i = 0; i < d_inputs.size(); i++) {
+-        if (d_inputs[i].size() == 0) {
++        if (d_inputs[i].empty()) {
+             msg << "In hierarchical block " << d_owner->name() << ", input " << i
+                 << " is not connected internally";
+             throw std::runtime_error(msg.str());
+diff --git a/gnuradio-runtime/lib/io_signature.cc b/gnuradio-runtime/lib/io_signature.cc
+index d5bb427ab8..dc8f65d0b9 100644
+--- a/gnuradio-runtime/lib/io_signature.cc
++++ b/gnuradio-runtime/lib/io_signature.cc
+@@ -79,8 +79,9 @@ io_signature::io_signature(int min_streams,
+     if (min_streams < 0 || (max_streams != IO_INFINITE && max_streams < min_streams))
+         throw std::invalid_argument("gr::io_signature(1)");
+ 
+-    if (sizeof_stream_items.size() < 1)
++    if (sizeof_stream_items.empty()) {
+         throw std::invalid_argument("gr::io_signature(2)");
++    }
+ 
+     for (size_t i = 0; i < sizeof_stream_items.size(); i++) {
+         if (max_streams != 0 && sizeof_stream_items[i] < 1)
+diff --git a/gnuradio-runtime/lib/logger.cc b/gnuradio-runtime/lib/logger.cc
+index 6aab82b603..ce2772cadf 100644
+--- a/gnuradio-runtime/lib/logger.cc
++++ b/gnuradio-runtime/lib/logger.cc
+@@ -157,7 +157,7 @@ logger_ptr logger_get_logger(std::string name)
+ 
+ bool logger_load_config(const std::string& config_filename)
+ {
+-    if (config_filename.size() != 0) {
++    if (!config_filename.empty()) {
+         try {
+             log4cpp::PropertyConfigurator::configure(config_filename);
+             return true;
+@@ -343,7 +343,7 @@ bool configure_default_loggers(gr::logger_ptr& l,
+     GR_LOG_GETLOGGER(LOG, "gr_log." + name);
+     GR_LOG_SET_LEVEL(LOG, log_level);
+ 
+-    if (log_file.size() > 0) {
++    if (!log_file.empty()) {
+         if (log_file == "stdout") {
+             GR_LOG_SET_CONSOLE_APPENDER(LOG, "stdout", "gr::log :%p: %c{1} - %m%n");
+         } else if (log_file == "stderr") {
+@@ -356,7 +356,7 @@ bool configure_default_loggers(gr::logger_ptr& l,
+ 
+     GR_LOG_GETLOGGER(DLOG, "gr_log_debug." + name);
+     GR_LOG_SET_LEVEL(DLOG, debug_level);
+-    if (debug_file.size() > 0) {
++    if (!debug_file.empty()) {
+         if (debug_file == "stdout") {
+             GR_LOG_SET_CONSOLE_APPENDER(DLOG, "stdout", "gr::debug :%p: %c{1} - %m%n");
+         } else if (debug_file == "stderr") {
+@@ -376,7 +376,7 @@ bool update_logger_alias(const std::string& name, const std::string& alias)
+     std::string debug_file = p->get_string("LOG", "debug_file", "");
+ 
+     GR_LOG_GETLOGGER(LOG, "gr_log." + name);
+-    if (log_file.size() > 0) {
++    if (!log_file.empty()) {
+         if (log_file == "stdout") {
+             boost::format str("gr::log :%%p: %1% - %%m%%n");
+             GR_LOG_SET_CONSOLE_APPENDER(LOG, "stdout", boost::str(str % alias));
+diff --git a/gnuradio-runtime/lib/prefs.cc b/gnuradio-runtime/lib/prefs.cc
+index f59a2346f7..4173973c2e 100644
+--- a/gnuradio-runtime/lib/prefs.cc
++++ b/gnuradio-runtime/lib/prefs.cc
+@@ -243,7 +243,7 @@ bool prefs::get_bool(const std::string& section,
+ {
+     if (has_option(section, option)) {
+         std::string str = get_string(section, option, "");
+-        if (str == "") {
++        if (str.empty()) {
+             return default_val;
+         }
+         std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+@@ -281,7 +281,7 @@ long prefs::get_long(const std::string& section,
+ {
+     if (has_option(section, option)) {
+         std::string str = get_string(section, option, "");
+-        if (str == "") {
++        if (str.empty()) {
+             return default_val;
+         }
+         std::stringstream sstr(str);
+@@ -316,7 +316,7 @@ double prefs::get_double(const std::string& section,
+ {
+     if (has_option(section, option)) {
+         std::string str = get_string(section, option, "");
+-        if (str == "") {
++        if (str.empty()) {
+             return default_val;
+         }
+         std::stringstream sstr(str);
+diff --git a/gnuradio-runtime/lib/tpb_thread_body.cc b/gnuradio-runtime/lib/tpb_thread_body.cc
+index ff70ae197f..d64fd2f623 100644
+--- a/gnuradio-runtime/lib/tpb_thread_body.cc
++++ b/gnuradio-runtime/lib/tpb_thread_body.cc
+@@ -68,7 +68,7 @@ tpb_thread_body::tpb_thread_body(block_sptr block,
+     GR_LOG_GETLOGGER(LOG, "gr_log.tpb_thread_body");
+     GR_LOG_SET_LEVEL(LOG, log_level);
+     GR_CONFIG_LOGGER(config_file);
+-    if (log_file.size() > 0) {
++    if (!log_file.empty()) {
+         if (log_file == "stdout") {
+             GR_LOG_SET_CONSOLE_APPENDER(LOG, "stdout", "gr::log :%p: %c{1} - %m%n");
+         } else if (log_file == "stderr") {
+@@ -79,7 +79,7 @@ tpb_thread_body::tpb_thread_body(block_sptr block,
+     }
+ 
+     // Set thread affinity if it was set before fg was started.
+-    if (block->processor_affinity().size() > 0) {
++    if (!block->processor_affinity().empty()) {
+         gr::thread::thread_bind_to_processor(d->thread, block->processor_affinity());
+     }
+ 
+diff --git a/gr-blocks/lib/file_meta_source_impl.cc b/gr-blocks/lib/file_meta_source_impl.cc
+index b395d5d8c7..557abee7cc 100644
+--- a/gr-blocks/lib/file_meta_source_impl.cc
++++ b/gr-blocks/lib/file_meta_source_impl.cc
+@@ -258,7 +258,7 @@ bool file_meta_source_impl::open(const std::string& filename,
+     bool ret = true;
+     if (d_state == STATE_DETACHED) {
+         std::string s;
+-        if (hdr_filename == "")
++        if (hdr_filename.empty())
+             s = filename + ".hdr";
+         else
+             s = hdr_filename;
+diff --git a/gr-blocks/lib/multiply_matrix_impl.cc b/gr-blocks/lib/multiply_matrix_impl.cc
+index b9c7ed1dce..e1b9c746c6 100644
+--- a/gr-blocks/lib/multiply_matrix_impl.cc
++++ b/gr-blocks/lib/multiply_matrix_impl.cc
+@@ -212,7 +212,7 @@ typename multiply_matrix<T>::sptr
+ multiply_matrix<T>::make(std::vector<std::vector<T>> A,
+                          gr::block::tag_propagation_policy_t tag_propagation_policy)
+ {
+-    if (A.empty() || A[0].size() == 0) {
++    if (A.empty() || A[0].empty()) {
+         throw std::invalid_argument("matrix A has invalid dimensions.");
+     }
+     return gnuradio::get_initial_sptr(
+diff --git a/gr-blocks/lib/qa_gr_flowgraph.cc b/gr-blocks/lib/qa_gr_flowgraph.cc
+index c6d1ca1c6d..e35ccc49fd 100644
+--- a/gr-blocks/lib/qa_gr_flowgraph.cc
++++ b/gr-blocks/lib/qa_gr_flowgraph.cc
+@@ -269,8 +269,8 @@ BOOST_AUTO_TEST_CASE(t15_clear)
+ 
+     fg->clear();
+ 
+-    BOOST_REQUIRE(fg->edges().size() == 0);
+-    BOOST_REQUIRE(fg->calc_used_blocks().size() == 0);
++    BOOST_REQUIRE(fg->edges().empty());
++    BOOST_REQUIRE(fg->calc_used_blocks().empty());
+ }
+ 
+ BOOST_AUTO_TEST_CASE(t16_partition)
+diff --git a/gr-blocks/lib/tag_debug_impl.cc b/gr-blocks/lib/tag_debug_impl.cc
+index f4faff8e7c..82a06354e8 100644
+--- a/gr-blocks/lib/tag_debug_impl.cc
++++ b/gr-blocks/lib/tag_debug_impl.cc
+@@ -71,7 +71,7 @@ void tag_debug_impl::set_display(bool d) { d_display = d; }
+ 
+ void tag_debug_impl::set_key_filter(const std::string& key_filter)
+ {
+-    if (key_filter == "")
++    if (key_filter.empty())
+         d_filter = pmt::PMT_NIL;
+     else
+         d_filter = pmt::intern(key_filter);
+@@ -104,7 +104,7 @@ int tag_debug_impl::work(int noutput_items,
+         else
+             get_tags_in_range(d_tags, i, abs_N, end_N, d_filter);
+ 
+-        if (d_tags.size() > 0) {
++        if (!d_tags.empty()) {
+             toprint = true;
+         }
+ 
+diff --git a/gr-blocks/lib/tag_gate_impl.cc b/gr-blocks/lib/tag_gate_impl.cc
+index 1ced79a7a8..6367eebfa1 100644
+--- a/gr-blocks/lib/tag_gate_impl.cc
++++ b/gr-blocks/lib/tag_gate_impl.cc
+@@ -64,7 +64,7 @@ void tag_gate_impl::set_propagation(bool propagate_tags)
+ 
+ void tag_gate_impl::set_single_key(const std::string& single_key)
+ {
+-    if (single_key == "") {
++    if (single_key.empty()) {
+         d_single_key = pmt::PMT_NIL;
+         d_single_key_set = false;
+     } else {
+diff --git a/gr-blocks/lib/tagged_file_sink_impl.cc b/gr-blocks/lib/tagged_file_sink_impl.cc
+index b4e6f2e7cf..5b53bd1f74 100644
+--- a/gr-blocks/lib/tagged_file_sink_impl.cc
++++ b/gr-blocks/lib/tagged_file_sink_impl.cc
+@@ -94,7 +94,7 @@ int tagged_file_sink_impl::work(int noutput_items,
+     // Look for a time tag and initialize d_timeval.
+     std::vector<tag_t> time_tags_outer;
+     get_tags_in_range(time_tags_outer, 0, start_N, end_N, tkey);
+-    if (time_tags_outer.size() > 0) {
++    if (!time_tags_outer.empty()) {
+         const tag_t tag = time_tags_outer[0];
+         uint64_t offset = tag.offset;
+         pmt::pmt_t time = tag.value;
+@@ -122,7 +122,7 @@ int tagged_file_sink_impl::work(int noutput_items,
+                     std::vector<tag_t> time_tags;
+                     // get_tags_in_range(time_tags, 0, d_last_N, N, gr_tags::key_time);
+                     get_tags_in_range(time_tags, 0, d_last_N, N, tkey);
+-                    if (time_tags.size() > 0) {
++                    if (!time_tags.empty()) {
+                         const tag_t tag = time_tags[time_tags.size() - 1];
+ 
+                         uint64_t time_nitems = tag.offset;
+diff --git a/gr-blocks/lib/tagged_stream_align_impl.cc b/gr-blocks/lib/tagged_stream_align_impl.cc
+index 6c091da984..5bd99cd4b2 100644
+--- a/gr-blocks/lib/tagged_stream_align_impl.cc
++++ b/gr-blocks/lib/tagged_stream_align_impl.cc
+@@ -72,7 +72,7 @@ int tagged_stream_align_impl::general_work(int noutput_items,
+     } else {
+         get_tags_in_range(
+             tags, 0, nitems_read(0), nitems_read(0) + ninput_items[0], d_lengthtag);
+-        if (tags.size() > 0) {
++        if (!tags.empty()) {
+             d_have_sync = true;
+             consume_each(tags[0].offset - nitems_read(0));
+         } else {
+diff --git a/gr-blocks/lib/udp_sink_impl.cc b/gr-blocks/lib/udp_sink_impl.cc
+index 885503d0f1..19c4815d76 100644
+--- a/gr-blocks/lib/udp_sink_impl.cc
++++ b/gr-blocks/lib/udp_sink_impl.cc
+@@ -70,7 +70,7 @@ void udp_sink_impl::connect(const std::string& host, int port)
+         disconnect();
+ 
+     std::string s_port = (boost::format("%d") % port).str();
+-    if (host.size() > 0) {
++    if (!host.empty()) {
+         boost::asio::ip::udp::resolver resolver(d_io_service);
+         boost::asio::ip::udp::resolver::query query(
+             host, s_port, boost::asio::ip::resolver_query_base::passive);
+diff --git a/gr-blocks/lib/udp_source_impl.cc b/gr-blocks/lib/udp_source_impl.cc
+index a668086565..8719bec642 100644
+--- a/gr-blocks/lib/udp_source_impl.cc
++++ b/gr-blocks/lib/udp_source_impl.cc
+@@ -84,7 +84,7 @@ void udp_source_impl::connect(const std::string& host, int port)
+     std::string s_port;
+     s_port = (boost::format("%d") % d_port).str();
+ 
+-    if (host.size() > 0) {
++    if (!host.empty()) {
+         boost::asio::ip::udp::resolver resolver(d_io_service);
+         boost::asio::ip::udp::resolver::query query(
+             d_host, s_port, boost::asio::ip::resolver_query_base::passive);
+diff --git a/gr-blocks/lib/vector_source_impl.cc b/gr-blocks/lib/vector_source_impl.cc
+index b9709496fb..286681bc9b 100644
+--- a/gr-blocks/lib/vector_source_impl.cc
++++ b/gr-blocks/lib/vector_source_impl.cc
+@@ -57,7 +57,7 @@ vector_source_impl<T>::vector_source_impl(const std::vector<T>& data,
+       d_vlen(vlen),
+       d_tags(tags)
+ {
+-    if (tags.size() == 0) {
++    if (tags.empty()) {
+         d_settags = 0;
+     } else {
+         d_settags = 1;
+@@ -79,7 +79,7 @@ void vector_source_impl<T>::set_data(const std::vector<T>& data,
+     d_data = data;
+     d_tags = tags;
+     rewind();
+-    if (tags.size() == 0) {
++    if (tags.empty()) {
+         d_settags = false;
+     } else {
+         d_settags = true;
+diff --git a/gr-digital/lib/constellation.cc b/gr-digital/lib/constellation.cc
+index 2734a3e83e..3caafaa992 100644
+--- a/gr-digital/lib/constellation.cc
++++ b/gr-digital/lib/constellation.cc
+@@ -69,7 +69,7 @@ constellation::constellation(std::vector<gr_complex> constell,
+             d_constellation[i] = d_constellation[i] * d_scalefactor;
+         }
+     }
+-    if (pre_diff_code.size() == 0)
++    if (pre_diff_code.empty())
+         d_apply_pre_diff_code = false;
+     else if (pre_diff_code.size() != constsize)
+         throw std::runtime_error(
+@@ -307,7 +307,7 @@ void constellation::set_soft_dec_lut(const std::vector<std::vector<float>>& soft
+     d_lut_scale = powf(2.0, static_cast<float>(precision));
+ }
+ 
+-bool constellation::has_soft_dec_lut() { return d_soft_dec_lut.size() > 0; }
++bool constellation::has_soft_dec_lut() { return !d_soft_dec_lut.empty(); }
+ 
+ std::vector<std::vector<float>> constellation::soft_dec_lut() { return d_soft_dec_lut; }
+ 
+diff --git a/gr-digital/lib/costas_loop_cc_impl.cc b/gr-digital/lib/costas_loop_cc_impl.cc
+index 23ab7fc36e..c3b30834eb 100644
+--- a/gr-digital/lib/costas_loop_cc_impl.cc
++++ b/gr-digital/lib/costas_loop_cc_impl.cc
+@@ -180,7 +180,7 @@ int costas_loop_cc_impl::work(int noutput_items,
+                       pmt::intern("phase_est"));
+ 
+     for (int i = 0; i < noutput_items; i++) {
+-        if (tags.size() > 0) {
++        if (!tags.empty()) {
+             if (tags[0].offset - nitems_read(0) == (size_t)i) {
+                 d_phase = (float)pmt::to_double(tags[0].value);
+                 tags.erase(tags.begin());
+diff --git a/gr-digital/lib/hdlc_framer_pb_impl.cc b/gr-digital/lib/hdlc_framer_pb_impl.cc
+index 13d80e9b85..c6439ff72a 100644
+--- a/gr-digital/lib/hdlc_framer_pb_impl.cc
++++ b/gr-digital/lib/hdlc_framer_pb_impl.cc
+@@ -114,7 +114,7 @@ int hdlc_framer_pb_impl::work(int noutput_items,
+     // partial packets., but if we're to preserve tag boundaries
+     // this is much, much simpler.
+     int oidx = 0;
+-    while (d_leftovers.size() > 0) {
++    while (!d_leftovers.empty()) {
+         if ((size_t)noutput_items < (oidx + d_leftovers[0].size()))
+             return oidx;
+         memcpy(out + oidx, &d_leftovers[0][0], d_leftovers[0].size());
+diff --git a/gr-digital/lib/msk_timing_recovery_cc_impl.cc b/gr-digital/lib/msk_timing_recovery_cc_impl.cc
+index 1e4db9a6f3..5e2442bcaa 100644
+--- a/gr-digital/lib/msk_timing_recovery_cc_impl.cc
++++ b/gr-digital/lib/msk_timing_recovery_cc_impl.cc
+@@ -133,7 +133,7 @@ int msk_timing_recovery_cc_impl::general_work(int noutput_items,
+ 
+     while (oidx < noutput_items && iidx < ninp) {
+         // check to see if there's a tag to reset the timing estimate
+-        if (tags.size() > 0) {
++        if (!tags.empty()) {
+             int offset = tags[0].offset - nitems_read(0);
+             if ((offset >= iidx) && (offset < (iidx + d_sps))) {
+                 float center = (float)pmt::to_double(tags[0].value);
+diff --git a/gr-digital/lib/ofdm_chanest_vcvc_impl.cc b/gr-digital/lib/ofdm_chanest_vcvc_impl.cc
+index ea991990a7..1f368a40e5 100644
+--- a/gr-digital/lib/ofdm_chanest_vcvc_impl.cc
++++ b/gr-digital/lib/ofdm_chanest_vcvc_impl.cc
+@@ -60,8 +60,8 @@ ofdm_chanest_vcvc_impl::ofdm_chanest_vcvc_impl(
+       d_n_data_syms(n_data_symbols),
+       d_n_sync_syms(1),
+       d_eq_noise_red_len(eq_noise_red_len),
+-      d_ref_sym((sync_symbol2.size() && !force_one_sync_symbol) ? sync_symbol2
+-                                                                : sync_symbol1),
++      d_ref_sym((!sync_symbol2.empty() && !force_one_sync_symbol) ? sync_symbol2
++                                                                  : sync_symbol1),
+       d_corr_v(sync_symbol2),
+       d_known_symbol_diffs(0, 0),
+       d_new_symbol_diffs(0, 0),
+@@ -84,7 +84,7 @@ ofdm_chanest_vcvc_impl::ofdm_chanest_vcvc_impl(
+     }
+ 
+     // Sanity checks
+-    if (sync_symbol2.size()) {
++    if (!sync_symbol2.empty()) {
+         if (sync_symbol1.size() != sync_symbol2.size()) {
+             throw std::invalid_argument("sync symbols must have equal length.");
+         }
+@@ -149,7 +149,7 @@ int ofdm_chanest_vcvc_impl::get_carr_offset(const gr_complex* sync_sym1,
+                                             const gr_complex* sync_sym2)
+ {
+     int carr_offset = 0;
+-    if (d_corr_v.size()) {
++    if (!d_corr_v.empty()) {
+         // Use Schmidl & Cox method
+         float Bg_max = 0;
+         // g here is 2g in the paper
+diff --git a/gr-digital/lib/ofdm_equalizer_base.cc b/gr-digital/lib/ofdm_equalizer_base.cc
+index 024a3bb29e..3764e4f9ec 100644
+--- a/gr-digital/lib/ofdm_equalizer_base.cc
++++ b/gr-digital/lib/ofdm_equalizer_base.cc
+@@ -57,7 +57,7 @@ ofdm_equalizer_1d_pilots::ofdm_equalizer_1d_pilots(
+     if (input_is_shifted) {
+         fft_shift_width = fft_len / 2;
+     }
+-    if (!occupied_carriers.size()) {
++    if (occupied_carriers.empty()) {
+         std::fill(d_occupied_carriers.begin(), d_occupied_carriers.end(), true);
+     } else {
+         for (unsigned i = 0; i < occupied_carriers.size(); i++) {
+@@ -73,7 +73,7 @@ ofdm_equalizer_1d_pilots::ofdm_equalizer_1d_pilots(
+             }
+         }
+     }
+-    if (pilot_carriers.size()) {
++    if (!pilot_carriers.empty()) {
+         for (unsigned i = 0; i < pilot_carriers.size(); i++) {
+             if (pilot_carriers[i].size() != pilot_symbols[i].size()) {
+                 throw std::invalid_argument("pilot carriers and -symbols do not match.");
+diff --git a/gr-digital/lib/pfb_clock_sync_ccf_impl.cc b/gr-digital/lib/pfb_clock_sync_ccf_impl.cc
+index 5962eca761..851a593bea 100644
+--- a/gr-digital/lib/pfb_clock_sync_ccf_impl.cc
++++ b/gr-digital/lib/pfb_clock_sync_ccf_impl.cc
+@@ -68,7 +68,7 @@ pfb_clock_sync_ccf_impl::pfb_clock_sync_ccf_impl(double sps,
+       d_error(0),
+       d_out_idx(0)
+ {
+-    if (taps.size() == 0)
++    if (taps.empty())
+         throw std::runtime_error("pfb_clock_sync_ccf: please specify a filter.\n");
+ 
+     // Let scheduler adjust our relative_rate.
+@@ -382,7 +382,7 @@ int pfb_clock_sync_ccf_impl::general_work(int noutput_items,
+ 
+     // produce output as long as we can and there are enough input samples
+     while (i < noutput_items) {
+-        if (tags.size() > 0) {
++        if (!tags.empty()) {
+             size_t offset = tags[0].offset - nitems_read(0);
+             if ((offset >= (size_t)count) && (offset < (size_t)(count + d_sps))) {
+                 float center = (float)pmt::to_double(tags[0].value);
+diff --git a/gr-digital/lib/pfb_clock_sync_fff_impl.cc b/gr-digital/lib/pfb_clock_sync_fff_impl.cc
+index dbfadf2ed7..75973b84a0 100644
+--- a/gr-digital/lib/pfb_clock_sync_fff_impl.cc
++++ b/gr-digital/lib/pfb_clock_sync_fff_impl.cc
+@@ -65,7 +65,7 @@ pfb_clock_sync_fff_impl::pfb_clock_sync_fff_impl(double sps,
+       d_error(0),
+       d_out_idx(0)
+ {
+-    if (taps.size() == 0)
++    if (taps.empty())
+         throw std::runtime_error("pfb_clock_sync_fff: please specify a filter.\n");
+ 
+     // Let scheduler adjust our relative_rate.
+diff --git a/gr-dtv/lib/dvbt/dvbt_convolutional_deinterleaver_impl.cc b/gr-dtv/lib/dvbt/dvbt_convolutional_deinterleaver_impl.cc
+index 4e373ff1b8..3664baf3f5 100644
+--- a/gr-dtv/lib/dvbt/dvbt_convolutional_deinterleaver_impl.cc
++++ b/gr-dtv/lib/dvbt/dvbt_convolutional_deinterleaver_impl.cc
+@@ -110,7 +110,7 @@ int dvbt_convolutional_deinterleaver_impl::general_work(
+                             nread + (noutput_items * d_I * d_blocks),
+                             pmt::string_to_symbol("superframe_start"));
+ 
+-    if (tags.size()) {
++    if (!tags.empty()) {
+         if (tags[0].offset - nread) {
+             consume_each(tags[0].offset - nread);
+             return (0);
+diff --git a/gr-dtv/lib/dvbt/dvbt_demod_reference_signals_impl.cc b/gr-dtv/lib/dvbt/dvbt_demod_reference_signals_impl.cc
+index 7a494e3b8f..740e09f0b1 100644
+--- a/gr-dtv/lib/dvbt/dvbt_demod_reference_signals_impl.cc
++++ b/gr-dtv/lib/dvbt/dvbt_demod_reference_signals_impl.cc
+@@ -116,7 +116,7 @@ int dvbt_demod_reference_signals_impl::is_sync_start(int nitems)
+     this->get_tags_in_range(
+         tags, 0, nread, nread + nitems, pmt::string_to_symbol("sync_start"));
+ 
+-    return tags.size() ? 1 : 0;
++    return !tags.empty() ? 1 : 0;
+ }
+ 
+ int dvbt_demod_reference_signals_impl::general_work(
+diff --git a/gr-dtv/lib/dvbt/dvbt_viterbi_decoder_impl.cc b/gr-dtv/lib/dvbt/dvbt_viterbi_decoder_impl.cc
+index a2e12b3d2a..cc587629f9 100644
+--- a/gr-dtv/lib/dvbt/dvbt_viterbi_decoder_impl.cc
++++ b/gr-dtv/lib/dvbt/dvbt_viterbi_decoder_impl.cc
+@@ -644,7 +644,7 @@ int dvbt_viterbi_decoder_impl::general_work(int noutput_items,
+                                 nread + (nblocks * d_nsymbols),
+                                 pmt::string_to_symbol("superframe_start"));
+ 
+-        if (tags.size()) {
++        if (!tags.empty()) {
+             d_init = 0;
+ 
+ #ifdef DTV_SSE2
+diff --git a/gr-fec/lib/conv_bit_corr_bb_impl.h b/gr-fec/lib/conv_bit_corr_bb_impl.h
+index 14422dd878..6f72e95cd8 100644
+--- a/gr-fec/lib/conv_bit_corr_bb_impl.h
++++ b/gr-fec/lib/conv_bit_corr_bb_impl.h
+@@ -64,7 +64,7 @@ private:
+     std::vector<int> get_corr()
+     {
+         std::vector<int> bits;
+-        if (d_correlator.size() < 1) {
++        if (d_correlator.empty()) {
+             return bits;
+         }
+         for (size_t i = 0; i < d_correlator[0].size(); i++) {
+diff --git a/gr-fec/lib/generic_decoder.cc b/gr-fec/lib/generic_decoder.cc
+index fac9490495..710338ce33 100644
+--- a/gr-fec/lib/generic_decoder.cc
++++ b/gr-fec/lib/generic_decoder.cc
+@@ -45,7 +45,7 @@ generic_decoder::generic_decoder(std::string name)
+ 
+     GR_LOG_GETLOGGER(LOG, "gr_log." + alias());
+     GR_LOG_SET_LEVEL(LOG, log_level);
+-    if (log_file.size() > 0) {
++    if (!log_file.empty()) {
+         if (log_file == "stdout") {
+             GR_LOG_SET_CONSOLE_APPENDER(LOG, "stdout", "gr::log :%p: %c{1} - %m%n");
+         } else if (log_file == "stderr") {
+diff --git a/gr-fec/lib/generic_encoder.cc b/gr-fec/lib/generic_encoder.cc
+index 430aa3bc4d..520d5e8976 100644
+--- a/gr-fec/lib/generic_encoder.cc
++++ b/gr-fec/lib/generic_encoder.cc
+@@ -45,7 +45,7 @@ generic_encoder::generic_encoder(std::string name)
+ 
+     GR_LOG_GETLOGGER(LOG, "gr_log." + alias());
+     GR_LOG_SET_LEVEL(LOG, log_level);
+-    if (log_file.size() > 0) {
++    if (!log_file.empty()) {
+         if (log_file == "stdout") {
+             GR_LOG_SET_CONSOLE_APPENDER(LOG, "stdout", "gr::log :%p: %c{1} - %m%n");
+         } else if (log_file == "stderr") {
+diff --git a/gr-fft/lib/fft_vcc_fftw.cc b/gr-fft/lib/fft_vcc_fftw.cc
+index 9c546a92d7..131e5f16e1 100644
+--- a/gr-fft/lib/fft_vcc_fftw.cc
++++ b/gr-fft/lib/fft_vcc_fftw.cc
+@@ -67,7 +67,7 @@ int fft_vcc_fftw::nthreads() const { return d_fft->nthreads(); }
+ 
+ bool fft_vcc_fftw::set_window(const std::vector<float>& window)
+ {
+-    if (window.size() == 0 || window.size() == d_fft_size) {
++    if (window.empty() || window.size() == d_fft_size) {
+         d_window = window;
+         return true;
+     } else
+@@ -89,7 +89,7 @@ int fft_vcc_fftw::work(int noutput_items,
+     while (count++ < noutput_items) {
+ 
+         // copy input into optimally aligned buffer
+-        if (d_window.size()) {
++        if (!d_window.empty()) {
+             gr_complex* dst = d_fft->get_inbuf();
+             if (!d_forward && d_shift) {
+                 unsigned int offset = (!d_forward && d_shift) ? (d_fft_size / 2) : 0;
+diff --git a/gr-fft/lib/fft_vfc_fftw.cc b/gr-fft/lib/fft_vfc_fftw.cc
+index eac4268ba5..dbbce05151 100644
+--- a/gr-fft/lib/fft_vfc_fftw.cc
++++ b/gr-fft/lib/fft_vfc_fftw.cc
+@@ -62,7 +62,7 @@ int fft_vfc_fftw::nthreads() const { return d_fft->nthreads(); }
+ 
+ bool fft_vfc_fftw::set_window(const std::vector<float>& window)
+ {
+-    if (window.size() == 0 || window.size() == d_fft_size) {
++    if (window.empty() || window.size() == d_fft_size) {
+         d_window = window;
+         return true;
+     } else
+@@ -83,7 +83,7 @@ int fft_vfc_fftw::work(int noutput_items,
+     while (count++ < noutput_items) {
+ 
+         // copy input into optimally aligned buffer
+-        if (d_window.size()) {
++        if (!d_window.empty()) {
+             gr_complex* dst = d_fft->get_inbuf();
+             for (unsigned int i = 0; i < d_fft_size; i++) // apply window
+                 dst[i] = in[i] * d_window[i];
+diff --git a/gr-filter/lib/fft_filter.cc b/gr-filter/lib/fft_filter.cc
+index 2146aea525..0da55bbaf1 100644
+--- a/gr-filter/lib/fft_filter.cc
++++ b/gr-filter/lib/fft_filter.cc
+@@ -168,7 +168,7 @@ int fft_filter_fff::filter(int nitems, const float* input, float* output)
+         dec_ctr = (j - d_nsamples);
+ 
+         // stash the tail
+-        if (d_tail.size()) {
++        if (!d_tail.empty()) {
+             memcpy(&d_tail[0],
+                    d_invfft->get_outbuf() + d_nsamples,
+                    tailsize() * sizeof(float));
+@@ -315,7 +315,7 @@ int fft_filter_ccc::filter(int nitems, const gr_complex* input, gr_complex* outp
+         dec_ctr = (j - d_nsamples);
+ 
+         // stash the tail
+-        if (d_tail.size()) {
++        if (!d_tail.empty()) {
+             memcpy(&d_tail[0],
+                    d_invfft->get_outbuf() + d_nsamples,
+                    tailsize() * sizeof(gr_complex));
+@@ -464,7 +464,7 @@ int fft_filter_ccf::filter(int nitems, const gr_complex* input, gr_complex* outp
+         dec_ctr = (j - d_nsamples);
+ 
+         // stash the tail
+-        if (d_tail.size()) {
++        if (!d_tail.empty()) {
+             memcpy(&d_tail[0],
+                    d_invfft->get_outbuf() + d_nsamples,
+                    tailsize() * sizeof(gr_complex));
+diff --git a/gr-filter/lib/interp_fir_filter_impl.cc b/gr-filter/lib/interp_fir_filter_impl.cc
+index e21a936220..666998952d 100644
+--- a/gr-filter/lib/interp_fir_filter_impl.cc
++++ b/gr-filter/lib/interp_fir_filter_impl.cc
+@@ -55,7 +55,7 @@ interp_fir_filter_impl<IN_T, OUT_T, TAP_T>::interp_fir_filter_impl(
+         throw std::out_of_range("interp_fir_filter_impl: interpolation must be > 0\n");
+     }
+ 
+-    if (taps.size() == 0) {
++    if (taps.empty()) {
+         throw std::runtime_error("interp_fir_filter_impl: no filter taps provided.\n");
+     }
+ 
+diff --git a/gr-filter/lib/pfb_channelizer_ccf_impl.cc b/gr-filter/lib/pfb_channelizer_ccf_impl.cc
+index a45993a01e..2fbd83cd19 100644
+--- a/gr-filter/lib/pfb_channelizer_ccf_impl.cc
++++ b/gr-filter/lib/pfb_channelizer_ccf_impl.cc
+@@ -125,7 +125,7 @@ void pfb_channelizer_ccf_impl::set_channel_map(const std::vector<int>& map)
+ {
+     gr::thread::scoped_lock guard(d_mutex);
+ 
+-    if (map.size() > 0) {
++    if (!map.empty()) {
+         unsigned int max = (unsigned int)*std::max_element(map.begin(), map.end());
+         if (max >= d_nfilts) {
+             throw std::invalid_argument(
+diff --git a/gr-filter/lib/pfb_synthesizer_ccf_impl.cc b/gr-filter/lib/pfb_synthesizer_ccf_impl.cc
+index c072d26b34..2df83ccbde 100644
+--- a/gr-filter/lib/pfb_synthesizer_ccf_impl.cc
++++ b/gr-filter/lib/pfb_synthesizer_ccf_impl.cc
+@@ -213,7 +213,7 @@ void pfb_synthesizer_ccf_impl::set_channel_map(const std::vector<int>& map)
+ {
+     gr::thread::scoped_lock guard(d_mutex);
+ 
+-    if (map.size() > 0) {
++    if (!map.empty()) {
+         int max = *std::max_element(map.begin(), map.end());
+         int min = *std::min_element(map.begin(), map.end());
+         if ((max >= static_cast<int>(d_twox * d_numchans)) || (min < 0)) {
+diff --git a/gr-filter/lib/pm_remez.cc b/gr-filter/lib/pm_remez.cc
+index cc952bfba3..6cb45d6925 100644
+--- a/gr-filter/lib/pm_remez.cc
++++ b/gr-filter/lib/pm_remez.cc
+@@ -821,7 +821,7 @@ std::vector<double> pm_remez(int order,
+     for (int i = 0; i < numbands; i++)
+         weight[i] = 1.0;
+ 
+-    if (arg_weight.size() != 0) {
++    if (!arg_weight.empty()) {
+         if ((int)arg_weight.size() != numbands)
+             punt("gr_remez: need one weight for each band [=length(band)/2]");
+         for (int i = 0; i < numbands; i++)
+diff --git a/gr-qtgui/lib/TimeDomainDisplayPlot.cc b/gr-qtgui/lib/TimeDomainDisplayPlot.cc
+index 73796b54b3..4b60871f0a 100644
+--- a/gr-qtgui/lib/TimeDomainDisplayPlot.cc
++++ b/gr-qtgui/lib/TimeDomainDisplayPlot.cc
+@@ -260,7 +260,7 @@ void TimeDomainDisplayPlot::plotNewData(const std::vector<double*> dataPoints,
+             // Plot and attach any new tags found.
+             // First test if this was a complex input where real/imag get
+             // split here into two stream.
+-            if (tags.size() > 0) {
++            if (!tags.empty()) {
+                 bool cmplx = false;
+                 unsigned int mult = d_nplots / tags.size();
+                 if (mult == 2)
+diff --git a/gr-qtgui/lib/ber_sink_b_impl.cc b/gr-qtgui/lib/ber_sink_b_impl.cc
+index 3b8c6a9d89..e87ce4db06 100644
+--- a/gr-qtgui/lib/ber_sink_b_impl.cc
++++ b/gr-qtgui/lib/ber_sink_b_impl.cc
+@@ -109,7 +109,7 @@ ber_sink_b_impl::ber_sink_b_impl(std::vector<float> esnos,
+ 
+     if (curvenames.size() == (unsigned int)curves) {
+         for (int j = 0; j < curves; j++) {
+-            if (curvenames[j] != "") {
++            if (!curvenames[j].empty()) {
+                 set_line_label(j, curvenames[j]);
+             }
+         }
+diff --git a/gr-qtgui/lib/const_sink_c_impl.cc b/gr-qtgui/lib/const_sink_c_impl.cc
+index a2f2f3458c..852f6ee109 100644
+--- a/gr-qtgui/lib/const_sink_c_impl.cc
++++ b/gr-qtgui/lib/const_sink_c_impl.cc
+@@ -138,7 +138,7 @@ void const_sink_c_impl::initialize()
+     d_main_gui = new ConstellationDisplayForm(numplots, d_parent);
+     d_main_gui->setNPoints(d_size);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     // initialize update time to 10 times a second
+@@ -364,7 +364,7 @@ void const_sink_c_impl::_test_trigger_tags(int nitems)
+     uint64_t nr = nitems_read(d_trigger_channel);
+     std::vector<gr::tag_t> tags;
+     get_tags_in_range(tags, d_trigger_channel, nr, nr + nitems, d_trigger_tag_key);
+-    if (tags.size() > 0) {
++    if (!tags.empty()) {
+         d_triggered = true;
+         trigger_index = tags[0].offset - nr;
+         d_start = d_index + trigger_index;
+diff --git a/gr-qtgui/lib/edit_box_msg_impl.cc b/gr-qtgui/lib/edit_box_msg_impl.cc
+index 0339276276..67fa5e9b39 100644
+--- a/gr-qtgui/lib/edit_box_msg_impl.cc
++++ b/gr-qtgui/lib/edit_box_msg_impl.cc
+@@ -106,7 +106,7 @@ edit_box_msg_impl::edit_box_msg_impl(data_type_t type,
+             d_key->setFixedWidth(width);
+ 
+             // Verify that a default key has been set or emit an error
+-            if (key.size() == 0) {
++            if (key.empty()) {
+                 throw std::runtime_error(
+                     "When using static + pair mode, please set a default key.");
+             }
+@@ -118,7 +118,7 @@ edit_box_msg_impl::edit_box_msg_impl(data_type_t type,
+     }
+ 
+     d_label = NULL;
+-    if (label != "") {
++    if (!label.empty()) {
+         d_label = new QLabel(QString(label.c_str()));
+         d_vlayout->addWidget(d_label);
+     }
+diff --git a/gr-qtgui/lib/freq_sink_c_impl.cc b/gr-qtgui/lib/freq_sink_c_impl.cc
+index 8372ce4b35..b692f458ac 100644
+--- a/gr-qtgui/lib/freq_sink_c_impl.cc
++++ b/gr-qtgui/lib/freq_sink_c_impl.cc
+@@ -171,7 +171,7 @@ void freq_sink_c_impl::initialize()
+     set_fft_size(d_fftsize);
+     set_frequency_range(d_center_freq, d_bandwidth);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     set_output_multiple(d_fftsize);
+@@ -387,7 +387,7 @@ void freq_sink_c_impl::_reset()
+ 
+ void freq_sink_c_impl::fft(float* data_out, const gr_complex* data_in, int size)
+ {
+-    if (d_window.size()) {
++    if (!d_window.empty()) {
+         volk_32fc_32f_multiply_32fc(d_fft->get_inbuf(), data_in, &d_window.front(), size);
+     } else {
+         memcpy(d_fft->get_inbuf(), data_in, sizeof(gr_complex) * size);
+@@ -529,7 +529,7 @@ void freq_sink_c_impl::_test_trigger_tags(int start, int nitems)
+     std::vector<gr::tag_t> tags;
+     get_tags_in_range(
+         tags, d_trigger_channel, nr + start, nr + start + nitems, d_trigger_tag_key);
+-    if (tags.size() > 0) {
++    if (!tags.empty()) {
+         d_triggered = true;
+         d_index = tags[0].offset - nr;
+         d_trigger_count = 0;
+diff --git a/gr-qtgui/lib/freq_sink_f_impl.cc b/gr-qtgui/lib/freq_sink_f_impl.cc
+index 4f25ffb522..c14bfc31fd 100644
+--- a/gr-qtgui/lib/freq_sink_f_impl.cc
++++ b/gr-qtgui/lib/freq_sink_f_impl.cc
+@@ -172,7 +172,7 @@ void freq_sink_f_impl::initialize()
+     set_fft_size(d_fftsize);
+     set_frequency_range(d_center_freq, d_bandwidth);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     set_output_multiple(d_fftsize);
+@@ -394,7 +394,7 @@ void freq_sink_f_impl::fft(float* data_out, const float* data_in, int size)
+     for (int i = 0; i < size; i++)
+         dst[i] = data_in[i];
+ 
+-    if (d_window.size()) {
++    if (!d_window.empty()) {
+         volk_32fc_32f_multiply_32fc(d_fft->get_inbuf(), dst, &d_window.front(), size);
+     }
+ 
+@@ -533,7 +533,7 @@ void freq_sink_f_impl::_test_trigger_tags(int start, int nitems)
+     std::vector<gr::tag_t> tags;
+     get_tags_in_range(
+         tags, d_trigger_channel, nr + start, nr + start + nitems, d_trigger_tag_key);
+-    if (tags.size() > 0) {
++    if (!tags.empty()) {
+         d_triggered = true;
+         d_index = tags[0].offset - nr;
+         d_trigger_count = 0;
+diff --git a/gr-qtgui/lib/freqdisplayform.cc b/gr-qtgui/lib/freqdisplayform.cc
+index 2aafedd115..02e9e06301 100644
+--- a/gr-qtgui/lib/freqdisplayform.cc
++++ b/gr-qtgui/lib/freqdisplayform.cc
+@@ -423,7 +423,7 @@ void FreqDisplayForm::updateTrigger(gr::qtgui::trigger_mode mode)
+     }
+ 
+     // if tag mode, popup tag key box to set
+-    if ((d_trig_tag_key == "") && (d_trig_mode == gr::qtgui::TRIG_MODE_TAG))
++    if ((d_trig_tag_key.empty()) && (d_trig_mode == gr::qtgui::TRIG_MODE_TAG))
+         d_tr_tag_key_act->activate(QAction::Trigger);
+ 
+     emit signalReplot();
+diff --git a/gr-qtgui/lib/histogram_sink_f_impl.cc b/gr-qtgui/lib/histogram_sink_f_impl.cc
+index d66676a9c3..d16de932ca 100644
+--- a/gr-qtgui/lib/histogram_sink_f_impl.cc
++++ b/gr-qtgui/lib/histogram_sink_f_impl.cc
+@@ -137,7 +137,7 @@ void histogram_sink_f_impl::initialize()
+     d_main_gui->setNPoints(d_size);
+     d_main_gui->setXaxis(d_xmin, d_xmax);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     // initialize update time to 10 times a second
+diff --git a/gr-qtgui/lib/qtgui_util.cc b/gr-qtgui/lib/qtgui_util.cc
+index 75befcd5b0..c7f57b6161 100644
+--- a/gr-qtgui/lib/qtgui_util.cc
++++ b/gr-qtgui/lib/qtgui_util.cc
+@@ -104,7 +104,7 @@ QwtPickerMachine* QwtDblClickPlotPicker::stateMachine(int n) const
+ void check_set_qss(QApplication* app)
+ {
+     std::string qssfile = gr::prefs::singleton()->get_string("qtgui", "qss", "");
+-    if (qssfile.size() > 0) {
++    if (!qssfile.empty()) {
+         QString sstext = get_qt_style_sheet(QString(qssfile.c_str()));
+         app->setStyleSheet(sstext);
+     }
+diff --git a/gr-qtgui/lib/sink_c_impl.cc b/gr-qtgui/lib/sink_c_impl.cc
+index 0caa2f0782..d3feb9d16c 100644
+--- a/gr-qtgui/lib/sink_c_impl.cc
++++ b/gr-qtgui/lib/sink_c_impl.cc
+@@ -238,7 +238,7 @@ void sink_c_impl::set_update_time(double t)
+ 
+ void sink_c_impl::fft(float* data_out, const gr_complex* data_in, int size)
+ {
+-    if (d_window.size()) {
++    if (!d_window.empty()) {
+         volk_32fc_32f_multiply_32fc(d_fft->get_inbuf(), data_in, &d_window.front(), size);
+     } else {
+         memcpy(d_fft->get_inbuf(), data_in, sizeof(gr_complex) * size);
+diff --git a/gr-qtgui/lib/sink_f_impl.cc b/gr-qtgui/lib/sink_f_impl.cc
+index 635e293a0f..418b630b78 100644
+--- a/gr-qtgui/lib/sink_f_impl.cc
++++ b/gr-qtgui/lib/sink_f_impl.cc
+@@ -228,7 +228,7 @@ void sink_f_impl::set_update_time(double t)
+ 
+ void sink_f_impl::fft(float* data_out, const float* data_in, int size)
+ {
+-    if (d_window.size()) {
++    if (!d_window.empty()) {
+         gr_complex* dst = d_fft->get_inbuf();
+         for (int i = 0; i < size; i++) // apply window
+             dst[i] = data_in[i] * d_window[i];
+diff --git a/gr-qtgui/lib/spectrumdisplayform.cc b/gr-qtgui/lib/spectrumdisplayform.cc
+index 68db7be975..1c7a157c34 100644
+--- a/gr-qtgui/lib/spectrumdisplayform.cc
++++ b/gr-qtgui/lib/spectrumdisplayform.cc
+@@ -484,7 +484,7 @@ void SpectrumDisplayForm::setAverageCount(const int newCount)
+ void SpectrumDisplayForm::_averageHistory(const double* newBuffer)
+ {
+     if (_numRealDataPoints > 0) {
+-        if (_historyVector->size() > 0) {
++        if (!_historyVector->empty()) {
+             memcpy(_historyVector->operator[](_historyEntry),
+                    newBuffer,
+                    _numRealDataPoints * sizeof(double));
+diff --git a/gr-qtgui/lib/time_raster_sink_b_impl.cc b/gr-qtgui/lib/time_raster_sink_b_impl.cc
+index c08e95a8d4..045c216b00 100644
+--- a/gr-qtgui/lib/time_raster_sink_b_impl.cc
++++ b/gr-qtgui/lib/time_raster_sink_b_impl.cc
+@@ -146,7 +146,7 @@ void time_raster_sink_b_impl::initialize()
+     d_main_gui =
+         new TimeRasterDisplayForm(numplots, d_samp_rate, d_rows, d_cols, 1, d_parent);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     // initialize update time to 10 times a second
+@@ -297,7 +297,7 @@ double time_raster_sink_b_impl::num_cols() { return d_main_gui->numCols(); }
+ 
+ void time_raster_sink_b_impl::set_multiplier(const std::vector<float>& mult)
+ {
+-    if (mult.size() == 0) {
++    if (mult.empty()) {
+         for (int i = 0; i < d_nconnections + 1; i++) {
+             d_mult[i] = 1.0f;
+         }
+@@ -317,7 +317,7 @@ void time_raster_sink_b_impl::set_multiplier(const std::vector<float>& mult)
+ 
+ void time_raster_sink_b_impl::set_offset(const std::vector<float>& offset)
+ {
+-    if (offset.size() == 0) {
++    if (offset.empty()) {
+         for (int i = 0; i < d_nconnections + 1; i++) {
+             d_offset[i] = 0.0f;
+         }
+diff --git a/gr-qtgui/lib/time_raster_sink_f_impl.cc b/gr-qtgui/lib/time_raster_sink_f_impl.cc
+index 05c37963b4..d186f319da 100644
+--- a/gr-qtgui/lib/time_raster_sink_f_impl.cc
++++ b/gr-qtgui/lib/time_raster_sink_f_impl.cc
+@@ -144,7 +144,7 @@ void time_raster_sink_f_impl::initialize()
+     d_main_gui =
+         new TimeRasterDisplayForm(numplots, d_samp_rate, d_rows, d_cols, 1, d_parent);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     // initialize update time to 10 times a second
+@@ -300,7 +300,7 @@ double time_raster_sink_f_impl::num_cols() { return d_main_gui->numCols(); }
+ 
+ void time_raster_sink_f_impl::set_multiplier(const std::vector<float>& mult)
+ {
+-    if (mult.size() == 0) {
++    if (mult.empty()) {
+         for (int i = 0; i < d_nconnections; i++) {
+             d_mult[i] = 1.0f;
+         }
+@@ -316,7 +316,7 @@ void time_raster_sink_f_impl::set_multiplier(const std::vector<float>& mult)
+ 
+ void time_raster_sink_f_impl::set_offset(const std::vector<float>& offset)
+ {
+-    if (offset.size() == 0) {
++    if (offset.empty()) {
+         for (int i = 0; i < d_nconnections; i++) {
+             d_offset[i] = 0.0f;
+         }
+diff --git a/gr-qtgui/lib/time_sink_c_impl.cc b/gr-qtgui/lib/time_sink_c_impl.cc
+index 95ac4c2f69..a05672f831 100644
+--- a/gr-qtgui/lib/time_sink_c_impl.cc
++++ b/gr-qtgui/lib/time_sink_c_impl.cc
+@@ -151,7 +151,7 @@ void time_sink_c_impl::initialize()
+     d_main_gui->setNPoints(d_size);
+     d_main_gui->setSampleRate(d_samp_rate);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     // initialize update time to 10 times a second
+@@ -496,7 +496,7 @@ void time_sink_c_impl::_test_trigger_tags(int nitems)
+     std::vector<gr::tag_t> tags;
+     get_tags_in_range(
+         tags, d_trigger_channel / 2, nr, nr + nitems + 1, d_trigger_tag_key);
+-    if (tags.size() > 0) {
++    if (!tags.empty()) {
+         trigger_index = tags[0].offset - nr;
+         int start = d_index + trigger_index - d_trigger_delay - 1;
+         if (start >= 0) {
+diff --git a/gr-qtgui/lib/time_sink_f_impl.cc b/gr-qtgui/lib/time_sink_f_impl.cc
+index e834411e6a..df13998d75 100644
+--- a/gr-qtgui/lib/time_sink_f_impl.cc
++++ b/gr-qtgui/lib/time_sink_f_impl.cc
+@@ -147,7 +147,7 @@ void time_sink_f_impl::initialize()
+     d_main_gui->setNPoints(d_size);
+     d_main_gui->setSampleRate(d_samp_rate);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     // initialize update time to 10 times a second
+@@ -489,7 +489,7 @@ void time_sink_f_impl::_test_trigger_tags(int nitems)
+     uint64_t nr = nitems_read(d_trigger_channel);
+     std::vector<gr::tag_t> tags;
+     get_tags_in_range(tags, d_trigger_channel, nr, nr + nitems + 1, d_trigger_tag_key);
+-    if (tags.size() > 0) {
++    if (!tags.empty()) {
+         trigger_index = tags[0].offset - nr;
+         int start = d_index + trigger_index - d_trigger_delay - 1;
+         if (start >= 0) {
+diff --git a/gr-qtgui/lib/timedisplayform.cc b/gr-qtgui/lib/timedisplayform.cc
+index 1c50f57f15..d5ec4e7fde 100644
+--- a/gr-qtgui/lib/timedisplayform.cc
++++ b/gr-qtgui/lib/timedisplayform.cc
+@@ -376,7 +376,7 @@ void TimeDisplayForm::updateTrigger(gr::qtgui::trigger_mode mode)
+     }
+ 
+     // if tag mode, popup tag key box to set
+-    if ((d_trig_tag_key == "") && (d_trig_mode == gr::qtgui::TRIG_MODE_TAG))
++    if ((d_trig_tag_key.empty()) && (d_trig_mode == gr::qtgui::TRIG_MODE_TAG))
+         d_tr_tag_key_act->activate(QAction::Trigger);
+ 
+     emit signalReplot();
+diff --git a/gr-qtgui/lib/waterfall_sink_c_impl.cc b/gr-qtgui/lib/waterfall_sink_c_impl.cc
+index edbbfdc609..121023d528 100644
+--- a/gr-qtgui/lib/waterfall_sink_c_impl.cc
++++ b/gr-qtgui/lib/waterfall_sink_c_impl.cc
+@@ -182,7 +182,7 @@ void waterfall_sink_c_impl::initialize()
+     set_fft_size(d_fftsize);
+     set_frequency_range(d_center_freq, d_bandwidth);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     // initialize update time to 10 times a second
+@@ -318,7 +318,7 @@ void waterfall_sink_c_impl::disable_legend() { d_main_gui->disableLegend(); }
+ 
+ void waterfall_sink_c_impl::fft(float* data_out, const gr_complex* data_in, int size)
+ {
+-    if (d_window.size()) {
++    if (!d_window.empty()) {
+         volk_32fc_32f_multiply_32fc(d_fft->get_inbuf(), data_in, &d_window.front(), size);
+     } else {
+         memcpy(d_fft->get_inbuf(), data_in, sizeof(gr_complex) * size);
+diff --git a/gr-qtgui/lib/waterfall_sink_f_impl.cc b/gr-qtgui/lib/waterfall_sink_f_impl.cc
+index e523ac328e..aa1037a472 100644
+--- a/gr-qtgui/lib/waterfall_sink_f_impl.cc
++++ b/gr-qtgui/lib/waterfall_sink_f_impl.cc
+@@ -181,7 +181,7 @@ void waterfall_sink_f_impl::initialize()
+     set_fft_size(d_fftsize);
+     set_frequency_range(d_center_freq, d_bandwidth);
+ 
+-    if (d_name.size() > 0)
++    if (!d_name.empty())
+         set_title(d_name);
+ 
+     // initialize update time to 10 times a second
+@@ -327,7 +327,7 @@ void waterfall_sink_f_impl::fft(float* data_out, const float* data_in, int size)
+     for (int i = 0; i < size; i++)
+         dst[i] = data_in[i];
+ 
+-    if (d_window.size()) {
++    if (!d_window.empty()) {
+         volk_32fc_32f_multiply_32fc(d_fft->get_inbuf(), dst, &d_window.front(), size);
+     }
+ 
+-- 
+2.20.1
+

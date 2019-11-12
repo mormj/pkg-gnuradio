@@ -1,0 +1,50 @@
+From cfefe6e0ba9b893daf118a0a0a2703ad58e25f2e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marcus=20M=C3=BCller?= <marcus@hostalia.de>
+Date: Thu, 22 Aug 2019 19:33:50 +0200
+Subject: [PATCH 14/14] modtool: Py2 `input` means `eval`; use `raw_input`
+ instead.
+
+This only applies to maint-3.8. Thankfully, 3.9 won't be Py2-compatible.
+---
+ gr-utils/python/modtool/cli/base.py             | 6 +++++-
+ gr-utils/python/modtool/tools/util_functions.py | 6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/gr-utils/python/modtool/cli/base.py b/gr-utils/python/modtool/cli/base.py
+index 5fa2b8b7b4..0aa74111f3 100644
+--- a/gr-utils/python/modtool/cli/base.py
++++ b/gr-utils/python/modtool/cli/base.py
+@@ -122,7 +122,11 @@ def setup_cli_logger(logger):
+ 
+ def cli_input(msg):
+     """ Returns enhanced input """
+-    return input(click.style(msg, fg='cyan'))
++    if sys.version_info[0] < 3:
++        in_func = raw_input
++    else:
++        in_func = input
++    return in_func(click.style(msg, fg='cyan'))
+ 
+ 
+ def common_params(func):
+diff --git a/gr-utils/python/modtool/tools/util_functions.py b/gr-utils/python/modtool/tools/util_functions.py
+index 816c46634b..c6656543aa 100644
+--- a/gr-utils/python/modtool/tools/util_functions.py
++++ b/gr-utils/python/modtool/tools/util_functions.py
+@@ -143,8 +143,12 @@ def is_number(s):
+ def ask_yes_no(question, default):
+     """ Asks a binary question. Returns True for yes, False for no.
+     default is given as a boolean. """
++    if sys.version_info[0] < 3:
++        in_func = raw_input
++    else:
++        in_func = input
+     question += {True: ' [Y/n] ', False: ' [y/N] '}[default]
+-    if input(question).lower() != {True: 'n', False: 'y'}[default]:
++    if in_func(question).lower() != {True: 'n', False: 'y'}[default]:
+         return default
+     else:
+         return not default
+-- 
+2.20.1
+

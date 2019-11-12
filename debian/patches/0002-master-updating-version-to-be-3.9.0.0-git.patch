@@ -1,0 +1,28 @@
+From f1475ce5eea60d4780621b5f62b8c7a226cd29a9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marcus=20M=C3=BCller?= <mmueller@gnuradio.org>
+Date: Sat, 10 Aug 2019 00:56:19 +0200
+Subject: [PATCH 02/14] master: updating version to be 3.9.0.0-git
+
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a47a945f9b..0595755637 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -48,9 +48,9 @@ message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}.")
+ 
+ # Set the version information here
+ SET(VERSION_MAJOR 3)
+-SET(VERSION_API   8)
++SET(VERSION_API   9)
+ SET(VERSION_ABI   0)
+-SET(VERSION_PATCH 0)
++SET(VERSION_PATCH 0-git)
+ include(GrVersion) #setup version info
+ 
+ # Minimum dependency versions for central dependencies:
+-- 
+2.20.1
+
