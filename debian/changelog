@@ -1,9 +1,3 @@
-gnuradio (3.9.0.0git~master~13363~disco) disco; urgency=medium
-
-  * master at f78c95897ec696f208d2bc089c9fdc9e6367903d put back checks for io.h in cmake files #2874
-
- -- Josh Morman <mormjb@gmail.com>  Wed, 13 Nov 2019 12:45:49 -0500
-
 gnuradio (3.9.0.0git~master~13357~disco) disco; urgency=medium
 
   * master at 218d2c2029a8c4557906bbe55a56292f568f0910 Module name correction for bokehgui
