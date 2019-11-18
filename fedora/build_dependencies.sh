@@ -1,0 +1,51 @@
+# from the buildbot worker
+
+dnf install -y \
+ccache \
+ccache-swig \
+cmake \
+make \
+gcc \
+gcc-c++ \
+shadow-utils \
+xz \
+cmake \
+boost-devel \
+python3-devel \
+swig \
+cppunit-devel \
+doxygen \
+graphviz \
+python3-sphinx \
+fftw-devel \
+gsl-devel \
+python3-numpy \
+python3-scipy \
+gmp-devel \
+cppzmq-devel \
+python3-zmq \
+SDL-devel \
+alsa-lib-devel \
+portaudio-devel \
+jack-audio-connection-kit \
+uhd-devel \
+log4cpp-devel \
+codec2-devel \
+gsm-devel \
+thrift \
+thrift-devel \
+python3-thrift \
+xdg-utils \
+qwt-qt5-devel \
+python3-PyQt5 \
+python3-qt5-devel \
+desktop-file-utils \
+python3-mako \
+python3-click \
+python3-click-plugins \
+python3-pyyaml \
+python3-lxml \
+python3-gobject \
+gtk3 \
+python3-cairo \
+pango

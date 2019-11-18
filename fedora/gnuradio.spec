@@ -36,30 +36,61 @@ Source:         %{SOURCE}
 # gzip > ../%%{name}-%%{version}.tar.gz
 
 Requires(pre):	shadow-utils
-BuildRequires:	cmake, fftw-devel, cppunit-devel, xmlto
-BuildRequires:	graphviz, boost-devel, python3-devel, swig, doxygen
-BuildRequires:	libusbx-devel, SDL-devel, guile-devel
-BuildRequires:	portaudio-devel, libtool, gsm-devel
-# Gnuradio deprecated gr-comedi
-# http://gnuradio.org/redmine/issues/show/395
-# BuildRequires: comedilib-devel
-BuildRequires:	gsl-devel, numpy, python3-qt5-devel, python3-pyqtgraph
-BuildRequires:	python3-lxml, gtk3-devel, orc-devel
-BuildRequires:	desktop-file-utils, python3-mako, python3-six
-BuildRequires:	uhd-devel, python3, cppzmq-devel, zeromq-devel, thrift
-BuildRequires:	python3-sphinx, codec2-devel, findutils, python3-matplotlib
-BuildRequires:	jack-audio-connection-kit-devel
-BuildRequires:  log4cpp-devel, mpir-devel, python3-click
-#BuildRequires:	python3-thrift
-BuildRequires:  python3-pyyaml, pygobject3-devel, cairo, pango-devel
-%if ! 0%{?rhel:1}
-BuildRequires:	qwt-devel
-%endif
+BuildRequires:   ccache 
+BuildRequires:   ccache-swig 
+BuildRequires:   cmake 
+BuildRequires:   make 
+BuildRequires:   gcc 
+BuildRequires:   gcc-c++ 
+BuildRequires:   shadow-utils 
+BuildRequires:   xz 
+BuildRequires:   cmake 
+BuildRequires:   boost-devel 
+BuildRequires:   python3-devel 
+BuildRequires:   swig 
+BuildRequires:   cppunit-devel 
+BuildRequires:   doxygen 
+BuildRequires:   graphviz 
+BuildRequires:   python3-sphinx 
+BuildRequires:   fftw-devel 
+BuildRequires:   gsl-devel 
+BuildRequires:   python3-numpy 
+BuildRequires:   python3-scipy 
+BuildRequires:   gmp-devel 
+BuildRequires:   cppzmq-devel 
+BuildRequires:   python3-zmq 
+BuildRequires:   SDL-devel 
+BuildRequires:   alsa-lib-devel 
+BuildRequires:   portaudio-devel 
+BuildRequires:   jack-audio-connection-kit 
+BuildRequires:   uhd-devel 
+BuildRequires:   log4cpp-devel 
+BuildRequires:   codec2-devel 
+BuildRequires:   gsm-devel 
+BuildRequires:   thrift 
+BuildRequires:   thrift-devel 
+BuildRequires:   python3-thrift 
+BuildRequires:   xdg-utils 
+BuildRequires:   qwt-qt5-devel 
+BuildRequires:   python3-PyQt5 
+BuildRequires:   python3-qt5-devel 
+BuildRequires:   desktop-file-utils 
+BuildRequires:   python3-mako 
+BuildRequires:   python3-click 
+BuildRequires:   python3-click-plugins 
+BuildRequires:   python3-pyyaml 
+BuildRequires:   python3-lxml 
+BuildRequires:   python3-gobject 
+BuildRequires:   gtk3 
+BuildRequires:   python3-cairo 
+BuildRequires:   pango 
+
 Requires:	numpy, python3-scipy, portaudio, python3-lxml
 Requires:	PyQt5, zeromq, log4cpp-devel
 #Requires:	python3-thrift
 %if ! 0%{?rhel:1}
 Requires:	python3-pyopengl
+Requires: python3-click, python3-click-plugins, python3-yaml
 %endif
 Obsoletes:	usrp < 3.3.0-1
 Obsoletes:	grc < 0.80-1
@@ -116,7 +147,7 @@ cd build
 %cmake \
 -DSYSCONFDIR=%{_sysconfdir} \
 -DGR_PKG_DOC_DIR=%{_docdir}/%{name} \
--DENABLE_DOXYGEN=FALSE \
+-DENABLE_DOXYGEN=ON \
 -DGR_PYTHON_DIR=%{python3_sitearch} \
 -DENABLE_GR_AUDIO=ON \
 -DENABLE_GR_BLOCKS=ON \
