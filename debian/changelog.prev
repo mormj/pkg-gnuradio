@@ -1,3 +1,9 @@
+gnuradio (3.7.13.5~gnuradio~disco-4) disco; urgency=medium
+
+  * gnuradio ppa Release of v3.7.13.5 for disco
+
+ -- Josh Morman <mormjb@gmail.com>  Tue, 12 Nov 2019 11:32:35 -0500
+
 gnuradio (3.7.13.5~gnuradio~bionic-3) bionic; urgency=medium
 
   * gnuradio ppa Release of v3.7.13.5 for bionic
