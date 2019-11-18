@@ -1,9 +1,3 @@
-gnuradio (3.9.0.0git~master~13365~eoan) eoan; urgency=medium
-
-  * master at c86dd3515ceebe361f19d027d95b661e5e7dc432 grc: remove deprecated encoding argument from json.loads
-
- -- Josh Morman <mormjb@gmail.com>  Mon, 18 Nov 2019 15:06:43 -0500
-
 gnuradio (3.9.0.0git~master~13363~disco) disco; urgency=medium
 
   * master at f78c95897ec696f208d2bc089c9fdc9e6367903d put back checks for io.h in cmake files #2874
