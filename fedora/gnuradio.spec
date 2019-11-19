@@ -232,9 +232,6 @@ popd
 %{_datadir}/gnuradio/examples
 
 %changelog
-* Thu Jan 31 2019 Josh Morman <mormjb@gmail.com> - 3.9.0.0git-1
-- Rebuilt from GNU Radio master
-
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.7.13.4-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
