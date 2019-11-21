@@ -1,3 +1,9 @@
+gnuradio (3.9.0.0git~master~13366~eoan) eoan; urgency=medium
+
+  * master at 9bd441ed1ed326ae46ae6e0313394d8af3f33ba2 Document the statistical distribution that is used to simulate impulse noise.
+
+ -- Josh Morman <mormjb@gmail.com>  Thu, 21 Nov 2019 09:39:18 -0500
+
 gnuradio (3.9.0.0git~master~13365~eoan) eoan; urgency=medium
 
   * master at c86dd3515ceebe361f19d027d95b661e5e7dc432 grc: remove deprecated encoding argument from json.loads
