@@ -1,3 +1,9 @@
+gnuradio (3.8.0.0~gnuradio~disco-9) disco; urgency=medium
+
+  * gnuradio ppa Release of v3.8.0.0 for disco
+
+ -- Josh Morman <mormjb@gmail.com>  Thu, 21 Nov 2019 09:41:42 -0500
+
 gnuradio (3.8.0.0~gnuradio~disco-8) disco; urgency=medium
 
   * gnuradio ppa Release of v3.8.0.0 for disco
