@@ -1,3 +1,9 @@
+gnuradio (3.8.0.0~gnuradio~bionic-8) bionic; urgency=medium
+
+  * gnuradio ppa Release of v3.8.0.0 for bionic
+
+ -- Josh Morman <mormjb@gmail.com>  Wed, 13 Nov 2019 11:20:41 -0500
+
 gnuradio (3.8.0.0~gnuradio~bionic-7) bionic; urgency=medium
 
   * gnuradio ppa Release of v3.8.0.0 for bionic
