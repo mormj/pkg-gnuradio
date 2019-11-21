@@ -1,3 +1,9 @@
+gnuradio (3.8.0.0~gnuradio~eoan-9) eoan; urgency=medium
+
+  * gnuradio ppa Release of v3.8.0.0 for eoan
+
+ -- Josh Morman <mormjb@gmail.com>  Thu, 21 Nov 2019 09:42:40 -0500
+
 gnuradio (3.8.0.0~gnuradio~eoan-8) eoan; urgency=medium
 
   * gnuradio ppa Release of v3.8.0.0 for eoan
