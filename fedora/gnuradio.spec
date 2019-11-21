@@ -86,7 +86,7 @@ BuildRequires:   python3-cairo
 BuildRequires:   pango 
 
 Requires:	numpy, python3-scipy, portaudio, python3-lxml
-Requires:	PyQt5, zeromq, log4cpp-devel
+Requires:	PyQt5, zeromq, log4cpp-devel, python3-qt5
 #Requires:	python3-thrift
 %if ! 0%{?rhel:1}
 Requires:	python3-pyopengl
