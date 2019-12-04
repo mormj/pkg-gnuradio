@@ -1,3 +1,9 @@
+gnuradio (3.9.0.0git~master~13366~bionic) bionic; urgency=medium
+
+  * master at 9bd441ed1ed326ae46ae6e0313394d8af3f33ba2 Document the statistical distribution that is used to simulate impulse noise.
+
+ -- Josh Morman <mormjb@gmail.com>  Thu, 21 Nov 2019 09:36:58 -0500
+
 gnuradio (3.9.0.0git~master~13363~bionic) bionic; urgency=medium
 
   * master at f78c95897ec696f208d2bc089c9fdc9e6367903d put back checks for io.h in cmake files #2874
