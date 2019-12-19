@@ -1,3 +1,9 @@
+gnuradio (3.9.0.0git~master~13370~bionic) bionic; urgency=medium
+
+  * master at 6414c7c642ab79aa2e96d2e3b394856470cc1444 Merge pull request #2729 from hughpyle/master
+
+ -- Josh Morman <mormjb@gmail.com>  Wed, 04 Dec 2019 09:02:37 -0500
+
 gnuradio (3.9.0.0git~master~13366~bionic) bionic; urgency=medium
 
   * master at 9bd441ed1ed326ae46ae6e0313394d8af3f33ba2 Document the statistical distribution that is used to simulate impulse noise.
