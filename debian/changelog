@@ -1,3 +1,9 @@
+gnuradio (3.9.0.0git~master~13383~disco) disco; urgency=medium
+
+  * master at c24b15b48dbf0487ae8f8d4fc1c2570a23b6b28c grc: add send_flowgraph_error_report to Messages
+
+ -- Josh Morman <mormjb@gmail.com>  Thu, 19 Dec 2019 14:22:14 -0500
+
 gnuradio (3.9.0.0git~master~13370~disco) disco; urgency=medium
 
   * master at 6414c7c642ab79aa2e96d2e3b394856470cc1444 Merge pull request #2729 from hughpyle/master
