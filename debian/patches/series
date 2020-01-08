@@ -1,4 +1,4 @@
-debian-python-install
+#debian-python-install
 usr-bin-examples
 dependency-graph
 fix-pkg-config
