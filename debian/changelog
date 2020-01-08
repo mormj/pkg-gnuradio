@@ -1,3 +1,9 @@
+gnuradio (3.9.0.0git~master~13481~bionic) bionic; urgency=medium
+
+  * master at 65a8c6c526d05ce5bc060725d9338e81a4bbbc22 grc: make catch exceptions option an enum
+
+ -- Josh Morman <mormjb@gmail.com>  Wed, 08 Jan 2020 14:15:42 -0500
+
 gnuradio (3.9.0.0git~master~13383~bionic) bionic; urgency=medium
 
   * master at c24b15b48dbf0487ae8f8d4fc1c2570a23b6b28c grc: add send_flowgraph_error_report to Messages
