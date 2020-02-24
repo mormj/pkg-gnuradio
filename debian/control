@@ -34,11 +34,11 @@ Build-Depends: cmake,
 	       libqwt-qt5-dev,
                libsdl1.2-dev,
                libsndfile1-dev,
-	           libthrift-dev [amd64 arm64 armel armhf i386],
-               libuhd-dev (>=3.13.1) [!hurd-i386],
+	       libthrift-dev [amd64 arm64 armel armhf i386],
+               libuhd-dev,
                libusb-1.0-0-dev [!kfreebsd-any],
                libusb2-dev [kfreebsd-any],
-	           libvolk2-dev,
+	       libvolk2-dev,
                libxi-dev,
                libxrender-dev,
                libzmq3-dev [!hurd-i386] | libzmq-dev [!hurd-i386],
@@ -149,7 +149,8 @@ Depends: gnuradio (= ${binary:Version}),
          libboost-thread-dev,
          libcppunit-dev,
          libfftw3-dev,
-	 libgsm1-dev,
+         libgmp-dev,
+         libgsm1-dev,
          liblog4cpp5-dev,
          libvolk2-dev,
          python3-dev,
@@ -314,7 +315,7 @@ Description: gnuradio trellis modulation functions
 
 Package: libgnuradio-uhd
 Section: libs
-Architecture: kfreebsd-any linux-any
+Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Multi-Arch: same
