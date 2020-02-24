@@ -1,3 +1,9 @@
+gnuradio (3.7.14.0~gnuradio~bionic-1) bionic; urgency=medium
+
+  * gnuradio ppa Release of v3.7.14.0 for bionic
+
+ -- Josh Morman <mormjb@gmail.com>  Mon, 24 Feb 2020 12:06:14 -0500
+
 gnuradio (3.7.13.5~gnuradio~bionic-4) bionic; urgency=medium
 
   * gnuradio ppa Release of v3.7.13.5 for bionic
