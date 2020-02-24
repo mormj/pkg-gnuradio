@@ -1,3 +1,9 @@
+gnuradio (3.8.1.0-rc1~gnuradio~disco-1) disco; urgency=medium
+
+  * gnuradio ppa Release of v3.8.1.0-rc1 for disco
+
+ -- Josh Morman <mormjb@gmail.com>  Mon, 24 Feb 2020 11:43:11 -0500
+
 gnuradio (3.8.1.0~rc1-2) unstable; urgency=medium
 
   * Upload to unstable
