@@ -1,3 +1,9 @@
+gnuradio (3.7.14.0~gnuradio~eoan-1) eoan; urgency=medium
+
+  * gnuradio ppa Release of v3.7.14.0 for eoan
+
+ -- Josh Morman <mormjb@gmail.com>  Mon, 24 Feb 2020 12:01:56 -0500
+
 gnuradio (3.7.13.5~gnuradio~eoan-4) eoan; urgency=medium
 
   * gnuradio ppa Release of v3.7.13.5 for eoan
