@@ -59,7 +59,7 @@ Build-Depends: cmake,
                python3-sphinx,
 	       python3-yaml,
                python3-zmq [!hurd-i386],
-            python3-six
+            python3-six,
 	       qt5-qmake,
 	       qtbase5-dev,
 	       qttools5-dev,
