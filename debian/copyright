@@ -2,7 +2,7 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: gnuradio
 Upstream-Contact: http://gnuradio.org/
 Source:
- git archive --format=tar --prefix=gnuradio-3.7.10/  v3.7.10  | xz > ../gnuradio_3.7.10.orig.tar.xz
+ git archive --format=tar --prefix=gnuradio-3.8.1.0~rc1/  v3.8.1.0-rc1  | xz > ../gnuradio_3.8.1.0~rc1.orig.tar.xz
 Comment:
  Packages of versions 3.4 and up by A. Maitland Bottoms <bottoms@debian.org>,
  GNU Radio was re-packaged by Bdale Garbee <bdale@gag.com> to reflect
@@ -16,16 +16,21 @@ Comment:
 	Eric Blossom <eb@comsec.com>
 	Matt Ettus <matt@ettus.com>
 	Johnathan Corgan <jcorgan@corganenterprises.com>
+	Marcus Müller <marcus@hostalia.de>
+	Ben Hilburn <ben.hilburn@ettus.com>
  .
  See the AUTHORS file for a more complete list of contributors.
- The current upstream maintainer is Johnathan Corgan.
-Copyright: 2001-2012 Free Software Foundation, Inc.
+ The current upstream project leader is Ben Hilburn.
+ The current release manager is Marcus Müller.
+Copyright: 2001-2019 Free Software Foundation, Inc.
 License: GPL-3+
 
 Files: CMakeLists.txt README README.building-boost README.hacking
  cmake/* config.h.in docs/* dtools/* gnuradio-runtime/* gr-*/* grc/*
- RELEASE-NOTES.md README.md CHANGELOG.md .clang-format
-Copyright: 2010-2016 Free Software Foundation, Inc.
+ RELEASE-NOTES.md .clang-format .clang-tidy .gitattributes .gitignore
+ .Gitmodules .gitmodules .github/workflows/check-pr-formatting.yml
+ README.md CHANGELOG.md tools/* CODE_OF_CONDUCT.md VERSIONING
+Copyright: 2010-2020 Free Software Foundation, Inc.
 License: GPL-3+
 
 Files: volk/*

@@ -1,19 +1,2 @@
-# 0001-Prepared-Changelog-for-master-development-aiming-for.patch
-# 0002-master-updating-version-to-be-3.9.0.0-git.patch
-0003-Fix-for-typos-in-comments.patch
-0004-clang-tidy-misc-throw-by-value-catch-by-reference.patch
-0005-Fix-a-typo-in-the-YAML-for-Polyphase-Channelizer.patch
-# 0006-Revert-Prepared-Changelog-for-3.9-and-master-updatin.patch
-0007-Fix-another-source-typo.patch
-0008-clang-tidy-Edit-config-to-include-checks-that-have-b.patch
-0009-Use-emplace_back-params-instead-of-push_back-type-pa.patch
-0010-clang-tidy-in-gnuradio-runtime-use-empty-instead-of-.patch
-0011-runtime-block-gateway-shadowed-system-port.patch
-0012-runtime-update-flaky-qa-test-to-3.8-scheduler.patch
-0013-runtime-add-msg-ports-to-dot-graph-and-use-unique-na.patch
-0014-modtool-Py2-input-means-eval-use-raw_input-instead.patch
-debian-python-install
 usr-bin-examples
-dependency-graph
 fix-pkg-config
-# cmake-findable-template
