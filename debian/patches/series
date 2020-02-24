@@ -1,5 +1,5 @@
 #debian-python-install
 usr-bin-examples
-dependency-graph
-fix-pkg-config
+#dependency-graph
+#fix-pkg-config
 # cmake-findable-template
