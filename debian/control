@@ -56,8 +56,10 @@ Build-Depends: cmake,
                python3-opengl,
 	       python3-pyqt5 [!hurd-i386],
                python3-scipy,
+               python3-sphinx,
 	       python3-yaml,
                python3-zmq [!hurd-i386],
+            python3-six
 	       qt5-qmake,
 	       qtbase5-dev,
 	       qttools5-dev,
@@ -148,7 +150,8 @@ Depends: gnuradio (= ${binary:Version}),
          libboost-thread-dev,
          libcppunit-dev,
          libfftw3-dev,
-	 libgsm1-dev,
+         libgmp-dev,
+         libgsm1-dev,
          liblog4cpp5-dev,
          libvolk2-dev,
          python3-dev,
@@ -313,7 +316,7 @@ Description: gnuradio trellis modulation functions
 
 Package: libgnuradio-uhd
 Section: libs
-Architecture: kfreebsd-any linux-any
+Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Multi-Arch: same
