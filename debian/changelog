@@ -1,3 +1,9 @@
+gnuradio (3.9.0.0git~master~13593~bionic-4) bionic; urgency=medium
+
+  * master at 5f18a419e2cec9f46d67147cae957d304d7a0195 blocks: file_meta_sink header size error handling logic error
+
+ -- Josh Morman <mormjb@gmail.com>  Tue, 25 Feb 2020 14:33:06 -0500
+
 gnuradio (3.9.0.0git~master~13481~bionic) bionic; urgency=medium
 
   * master at 65a8c6c526d05ce5bc060725d9338e81a4bbbc22 grc: make catch exceptions option an enum
