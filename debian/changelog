@@ -1,3 +1,9 @@
+gnuradio (3.9.0.0git~master~13593~eoan-4) eoan; urgency=medium
+
+  * master at 5f18a419e2cec9f46d67147cae957d304d7a0195 blocks: file_meta_sink header size error handling logic error
+
+ -- Josh Morman <mormjb@gmail.com>  Tue, 25 Feb 2020 14:33:59 -0500
+
 gnuradio (3.9.0.0git~master~13383~eoan) eoan; urgency=medium
 
   * master at c24b15b48dbf0487ae8f8d4fc1c2570a23b6b28c grc: add send_flowgraph_error_report to Messages
