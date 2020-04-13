@@ -27,7 +27,7 @@ gr-dtv/examples/README.dvbt2
 gr-dtv/examples/README.dvbs2
 gr-dtv/examples/README.dvbt
 gr-dtv/docs/README.dtv
-gr-utils/utils/README.plot
+gr-utils/plot_tools/README.plot
 gr-utils/modtool/README.modtool
 gr-utils/modtool/templates/gr-newmod/examples/README
 gr-utils/modtool/templates/gr-newmod/docs/README.howto
