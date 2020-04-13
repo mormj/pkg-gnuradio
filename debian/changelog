@@ -1,10 +1,3 @@
-gnuradio (3.8.1.0~rc1-2) unstable; urgency=medium
-
-  * Upload to unstable
-  * build with volk 2.2.0
-
- -- A. Maitland Bottoms <bottoms@debian.org>  Tue, 18 Feb 2020 21:53:02 -0500
-
 gnuradio (3.8.0.0~gnuradio~eoan-9) eoan; urgency=medium
 
   * gnuradio ppa Release of v3.8.0.0 for eoan
