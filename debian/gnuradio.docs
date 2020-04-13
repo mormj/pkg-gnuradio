@@ -27,10 +27,10 @@ gr-dtv/examples/README.dvbt2
 gr-dtv/examples/README.dvbs2
 gr-dtv/examples/README.dvbt
 gr-dtv/docs/README.dtv
-gr-utils/python/utils/README.plot
-gr-utils/python/modtool/README.modtool
-gr-utils/python/modtool/templates/gr-newmod/examples/README
-gr-utils/python/modtool/templates/gr-newmod/docs/README.howto
+gr-utils/utils/README.plot
+gr-utils/modtool/README.modtool
+gr-utils/modtool/templates/gr-newmod/examples/README
+gr-utils/modtool/templates/gr-newmod/docs/README.howto
 gr-vocoder/lib/g7xx/README
 gr-vocoder/docs/README.vocoder
 gr-trellis/examples/python/README
