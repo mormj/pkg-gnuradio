@@ -266,6 +266,15 @@ Description: gnuradio filter functions
  PFB arbitrary resampler methods.
  Part of the main gnuradio build.
 
+Package: libgnuradio-network
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio network transport functions
+ Library for network transport, TCP, UDP functions.
+
 Package: libgnuradio-pmt
 Section: libs
 Architecture: any

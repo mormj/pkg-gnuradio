@@ -34,6 +34,7 @@ debian/libgnuradio-dtv/usr/lib/
 debian/libgnuradio-fec/usr/lib/
 debian/libgnuradio-filter/usr/lib/
 debian/libgnuradio-fft/usr/lib/
+debian/libgnuradio-network/usr/lib/
 debian/libgnuradio-pmt/usr/lib/
 debian/libgnuradio-qtgui/usr/lib/
 debian/libgnuradio-runtime/usr/lib/
