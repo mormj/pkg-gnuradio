@@ -56,7 +56,6 @@ Build-Depends: cmake,
                python3-opengl,
 	       python3-pyqt5 [!hurd-i386],
                python3-scipy,
-               python3-sphinx,
 	       python3-yaml,
                python3-zmq [!hurd-i386],
             python3-six,
@@ -266,6 +265,15 @@ Description: gnuradio filter functions
  FIR, IIR and FFT filters, as well as Polyphase filterbank and
  PFB arbitrary resampler methods.
  Part of the main gnuradio build.
+
+Package: libgnuradio-network
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio network transport functions
+ Library for network transport, TCP, UDP functions.
 
 Package: libgnuradio-pmt
 Section: libs
