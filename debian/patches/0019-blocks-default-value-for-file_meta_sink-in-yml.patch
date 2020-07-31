@@ -1,0 +1,25 @@
+From ac04ae2f632b1882c7204667ed0f30614ba2558a Mon Sep 17 00:00:00 2001
+From: Josh Morman <mormjb@gmail.com>
+Date: Tue, 12 May 2020 14:11:52 -0400
+Subject: [PATCH 19/32] blocks: default value for file_meta_sink in yml
+
+---
+ gr-blocks/grc/blocks_file_meta_sink.block.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gr-blocks/grc/blocks_file_meta_sink.block.yml b/gr-blocks/grc/blocks_file_meta_sink.block.yml
+index 19b0457913..c5bb0863ce 100644
+--- a/gr-blocks/grc/blocks_file_meta_sink.block.yml
++++ b/gr-blocks/grc/blocks_file_meta_sink.block.yml
+@@ -37,7 +37,7 @@ parameters:
+ -   id: extra_dict
+     label: Extra Dict.
+     dtype: raw
+-    default: '""'
++    default: pmt.make_dict()
+ -   id: detached
+     label: Detached
+     dtype: bool
+-- 
+2.20.1
+

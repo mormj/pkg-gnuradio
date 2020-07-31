@@ -1,0 +1,173 @@
+From 8c6872594f10eb06f694a89afb407af2624787d8 Mon Sep 17 00:00:00 2001
+From: Arpit Gupta <guptarpit1997@gmail.com>
+Date: Sun, 10 Mar 2019 12:21:13 +0530
+Subject: [PATCH 21/32] GRC: Fix color for input boxes in parameter widget for
+ dark themes
+
+Co-Authored-By: Martin Braun <martin@gnuradio.org>
+---
+ grc/gui/Constants.py     | 11 +++++++
+ grc/gui/ParamWidgets.py  | 69 ++++++++++++++++++++++++----------------
+ grc/gui/canvas/colors.py | 40 +++++++++++++++++++++++
+ 3 files changed, 92 insertions(+), 28 deletions(-)
+
+diff --git a/grc/gui/Constants.py b/grc/gui/Constants.py
+index a3d08cbe38..573fabe82b 100644
+--- a/grc/gui/Constants.py
++++ b/grc/gui/Constants.py
+@@ -106,6 +106,17 @@ and kindly ask to update their GRC Block Descriptions or Block Tree to include a
+ # DPI_SCALING = _SCREEN_RESOLUTION / 96.0 if _SCREEN_RESOLUTION > 0 else 1.0
+ DPI_SCALING = 1.0  # todo: figure out the GTK3 way (maybe cairo does this for us
+ 
++# Gtk-themes classified as dark
++GTK_DARK_THEMES = [
++    'Adwaita-dark',
++    'HighContrastInverse',
++]
++
++GTK_SETTINGS_INI_PATH = '~/.config/gtk-3.0/settings.ini'
++
++GTK_INI_PREFER_DARK_KEY = 'gtk-application-prefer-dark-theme'
++GTK_INI_THEME_NAME_KEY = 'gtk-theme-name'
++
+ 
+ def update_font_size(font_size):
+     global PORT_SEPARATION, BLOCK_FONT, PORT_FONT, PARAM_FONT, FONT_SIZE
+diff --git a/grc/gui/ParamWidgets.py b/grc/gui/ParamWidgets.py
+index d168b62d74..1b44f3bbdb 100644
+--- a/grc/gui/ParamWidgets.py
++++ b/grc/gui/ParamWidgets.py
+@@ -17,40 +17,53 @@
+ 
+ from __future__ import absolute_import
+ import os
++import configparser
++import subprocess
+ 
+ from gi.repository import Gtk, Gdk
+ 
++from . import Constants
+ from . import Utils
++from .canvas.colors import LIGHT_THEME_STYLES, DARK_THEME_STYLES
+ 
+ 
+-style_provider = Gtk.CssProvider()
+-
+-style_provider.load_from_data(b"""
+-    #dtype_complex         { background-color: #3399FF; }
+-    #dtype_real            { background-color: #FF8C69; }
+-    #dtype_float           { background-color: #FF8C69; }
+-    #dtype_int             { background-color: #00FF99; }
+-
+-    #dtype_complex_vector  { background-color: #3399AA; }
+-    #dtype_real_vector     { background-color: #CC8C69; }
+-    #dtype_float_vector    { background-color: #CC8C69; }
+-    #dtype_int_vector      { background-color: #00CC99; }
+-
+-    #dtype_bool            { background-color: #00FF99; }
+-    #dtype_hex             { background-color: #00FF99; }
+-    #dtype_string          { background-color: #CC66CC; }
+-    #dtype_id              { background-color: #DDDDDD; }
+-    #dtype_stream_id       { background-color: #DDDDDD; }
+-    #dtype_raw             { background-color: #FFFFFF; }
+-
+-    #enum_custom           { background-color: #EEEEEE; }
+-""")
+-
+-Gtk.StyleContext.add_provider_for_screen(
+-    Gdk.Screen.get_default(),
+-    style_provider,
+-    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+-)
++def have_dark_theme():
++    """
++    Returns true if the currently selected theme is a dark one.
++    """
++    def is_dark_theme(theme_name):
++        """
++        Check if a theme is dark based on its name.
++        """
++        return theme_name in Constants.GTK_DARK_THEMES or "dark" in theme_name.lower()
++    # GoGoGo
++    config = configparser.ConfigParser()
++    config.read(os.path.expanduser(Constants.GTK_SETTINGS_INI_PATH))
++    prefer_dark = config.get(
++        'Settings', Constants.GTK_INI_PREFER_DARK_KEY, fallback=None)
++    if prefer_dark in ('1', 'yes', 'true', 'on'):
++        theme_name = config.get(
++            'Settings', Constants.GTK_INI_THEME_NAME_KEY, fallback=None)
++        return is_dark_theme(theme_name)
++    theme = subprocess.check_output(
++        ["gsettings", "get", "org.gnome.desktop.interface", "gtk-theme"]
++    ).decode('utf-8').strip().replace("'", "")
++    return is_dark_theme(theme)
++
++def add_style_provider():
++    """
++    Load GTK styles
++    """
++    style_provider = Gtk.CssProvider()
++    dark_theme = have_dark_theme()
++    style_provider.load_from_data(
++        DARK_THEME_STYLES if dark_theme else LIGHT_THEME_STYLES)
++    Gtk.StyleContext.add_provider_for_screen(
++        Gdk.Screen.get_default(),
++        style_provider,
++        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
++    )
++add_style_provider()
+ 
+ 
+ class InputParam(Gtk.HBox):
+diff --git a/grc/gui/canvas/colors.py b/grc/gui/canvas/colors.py
+index 77d3203e78..76fb5fd951 100644
+--- a/grc/gui/canvas/colors.py
++++ b/grc/gui/canvas/colors.py
+@@ -75,4 +75,44 @@ PORT_TYPE_TO_COLOR.update((key, get_color(color)) for key, (_, color) in Constan
+ #################################################################################
+ # param box colors
+ #################################################################################
++DARK_THEME_STYLES = b"""
++                         #dtype_complex         { background-color: #3399FF; }
++                         #dtype_real            { background-color: #FF8C69; }
++                         #dtype_float           { background-color: #FF8C69; }
++                         #dtype_int             { background-color: #00FF99; }
++
++                         #dtype_complex_vector  { background-color: #3399AA; }
++                         #dtype_real_vector     { background-color: #CC8C69; }
++                         #dtype_float_vector    { background-color: #CC8C69; }
++                         #dtype_int_vector      { background-color: #00CC99; }
++
++                         #dtype_bool            { background-color: #00FF99; }
++                         #dtype_hex             { background-color: #00FF99; }
++                         #dtype_string          { background-color: #CC66CC; }
++                         #dtype_id              { background-color: #DDDDDD; }
++                         #dtype_stream_id       { background-color: #DDDDDD; }
++                         #dtype_raw             { background-color: #23272A; }
++
++                         #enum_custom           { background-color: #EEEEEE; }
++                     """
++LIGHT_THEME_STYLES = b"""
++                        #dtype_complex         { background-color: #3399FF; }
++                        #dtype_real            { background-color: #FF8C69; }
++                        #dtype_float           { background-color: #FF8C69; }
++                        #dtype_int             { background-color: #00FF99; }
++
++                        #dtype_complex_vector  { background-color: #3399AA; }
++                        #dtype_real_vector     { background-color: #CC8C69; }
++                        #dtype_float_vector    { background-color: #CC8C69; }
++                        #dtype_int_vector      { background-color: #00CC99; }
++
++                        #dtype_bool            { background-color: #00FF99; }
++                        #dtype_hex             { background-color: #00FF99; }
++                        #dtype_string          { background-color: #CC66CC; }
++                        #dtype_id              { background-color: #DDDDDD; }
++                        #dtype_stream_id       { background-color: #DDDDDD; }
++                        #dtype_raw             { background-color: #FFFFFF; }
++
++                        #enum_custom           { background-color: #EEEEEE; }
++                    """
+ 
+-- 
+2.20.1
+

@@ -1,0 +1,72 @@
+--- /dev/null
++++ b/docs/org.gnuradio.gnuradio.metainfo.xml
+@@ -0,0 +1,46 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!-- Copyright 2020 Free Software Foundation, Inc. -->
++<component type="desktop-application">
++  <id>org.gnuradio.gnuradio</id>
++  <metadata_license>FSFAP</metadata_license>
++  <project_license>GPL-3.0+</project_license>
++  <name>GNU Radio</name>
++  <summary>
++    Development toolkit that provides signal processing blocks to
++    implement software radios.
++  </summary>
++
++  <description>
++    <p>
++      GNU Radio is a free and open-source software development
++      toolkit that provides signal processing blocks to implement software
++      radios. It can be used with readily-available low-cost external RF
++      hardware to create software-defined radios, or without hardware in a
++      simulation-like environment. It is widely used in hobbyist, academic
++      and commercial environments to support both wireless communications
++      research and real-world radio systems.
++    </p>
++    <p>
++      The GNU Radio Companion (GRC), GNU Radio's graphical tool, was
++      created to simplify the use of GNU Radio by allowing us to create
++      python files graphically as opposed to creating them in code alone.
++    </p>
++  </description>
++
++  <launchable type="desktop-id">org.gnuradio.gnuradio-grc.desktop</launchable>
++
++  <url type="homepage">https://wiki.gnuradio.org/index.php/Main_Page</url>
++  <project_group>GNU Radio</project_group>
++
++  <provides>
++    <binary>gnuradio-companion</binary>
++  </provides>
++
++  <releases>
++    <release version="3.8.1.0" date="2020-04-09">
++      <description>
++        <p>Many small fixes and example updates.</p>
++      </description>
++    </release>
++  </releases>
++</component>
+--- a/docs/CMakeLists.txt
++++ b/docs/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright 2011 Free Software Foundation, Inc.
++# Copyright 2011,2020 Free Software Foundation, Inc.
+ #
+ # This file is part of GNU Radio
+ #
+@@ -24,6 +24,14 @@
+ find_package(Sphinx)
+ 
+ ########################################################################
++# Distribute the Appstream metadata file
++########################################################################
++install(
++    FILES org.gnuradio.gnuradio.metainfo.xml
++    DESTINATION /usr/share/metainfo/
++)
++
++########################################################################
+ # Register component
+ ########################################################################
+ include(GrComponent)

@@ -1,0 +1,26 @@
+From 1290600feb6bb670956689001968f52e84b9d6e3 Mon Sep 17 00:00:00 2001
+From: Ron Economos <w6rz@comcast.net>
+Date: Tue, 28 Apr 2020 19:00:44 -0700
+Subject: [PATCH 18/32] gr-dtv: Align DVB scrambler lookup table for 64-bit
+ access.
+
+---
+ gr-dtv/lib/dvb/dvb_bbscrambler_bb_impl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gr-dtv/lib/dvb/dvb_bbscrambler_bb_impl.h b/gr-dtv/lib/dvb/dvb_bbscrambler_bb_impl.h
+index cdba98557e..0a374c8203 100644
+--- a/gr-dtv/lib/dvb/dvb_bbscrambler_bb_impl.h
++++ b/gr-dtv/lib/dvb/dvb_bbscrambler_bb_impl.h
+@@ -32,7 +32,7 @@ class dvb_bbscrambler_bb_impl : public dvb_bbscrambler_bb
+ private:
+     int kbch;
+     int frame_size;
+-    unsigned char bb_randomise[FRAME_SIZE_NORMAL];
++    __GR_ATTR_ALIGNED(8) unsigned char bb_randomise[FRAME_SIZE_NORMAL];
+     uint32_t* bb_randomize32;
+     uint64_t* bb_randomize64;
+     void init_bb_randomiser(void);
+-- 
+2.20.1
+

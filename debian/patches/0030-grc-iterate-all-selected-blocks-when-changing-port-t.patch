@@ -1,0 +1,36 @@
+From e0997b8f87b817fa40e12e6ad0562c161f0b2ea4 Mon Sep 17 00:00:00 2001
+From: Sebastian Koslowski <sebastian.koslowski@gmail.com>
+Date: Fri, 22 May 2020 20:02:16 +0200
+Subject: [PATCH 30/32] grc: iterate all selected blocks when changing port
+ type (fixes #3500)
+
+previously the first hit terminated further processing
+---
+ grc/gui/canvas/flowgraph.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/grc/gui/canvas/flowgraph.py b/grc/gui/canvas/flowgraph.py
+index d8507d41e4..00a7f3ffba 100644
+--- a/grc/gui/canvas/flowgraph.py
++++ b/grc/gui/canvas/flowgraph.py
+@@ -322,7 +322,7 @@ class FlowGraph(CoreFlowgraph, Drawable):
+         Returns:
+             true for change
+         """
+-        return any(sb.type_controller_modify(direction) for sb in self.selected_blocks())
++        return any([sb.type_controller_modify(direction) for sb in self.selected_blocks()])
+ 
+     def port_controller_modify_selected(self, direction):
+         """
+@@ -334,7 +334,7 @@ class FlowGraph(CoreFlowgraph, Drawable):
+         Returns:
+             true for changed
+         """
+-        return any(sb.port_controller_modify(direction) for sb in self.selected_blocks())
++        return any([sb.port_controller_modify(direction) for sb in self.selected_blocks()])
+ 
+     def change_state_selected(self, new_state):
+         """
+-- 
+2.20.1
+

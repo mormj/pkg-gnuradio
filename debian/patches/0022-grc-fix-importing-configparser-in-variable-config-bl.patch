@@ -1,0 +1,41 @@
+From ecbf67e1743f84108f23e6d55239a4adad30cd1b Mon Sep 17 00:00:00 2001
+From: Clayton Smith <argilo@gmail.com>
+Date: Wed, 29 Apr 2020 20:13:47 -0400
+Subject: [PATCH 22/32] grc: fix importing configparser in variable config
+ block
+
+---
+ grc/blocks/variable_config.block.yml | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/grc/blocks/variable_config.block.yml b/grc/blocks/variable_config.block.yml
+index ba4d344f01..e0041a9e41 100644
+--- a/grc/blocks/variable_config.block.yml
++++ b/grc/blocks/variable_config.block.yml
+@@ -34,8 +34,12 @@ parameters:
+ value: ${ value }
+ 
+ templates:
+-    imports: import ConfigParser
+-    var_make: 'self._${id}_config = ConfigParser.ConfigParser()
++    imports: |-
++        try:
++            import configparser
++        except ImportError:
++            import ConfigParser as configparser
++    var_make: 'self._${id}_config = configparser.ConfigParser()
+ 
+         self._${id}_config.read(${config_file})
+ 
+@@ -46,7 +50,7 @@ templates:
+         self.${id} = ${id}'
+     callbacks:
+     - self.set_${id}(${value})
+-    - "self._${id}_config = ConfigParser.ConfigParser()\nself._${id}_config.read(${config_file})\n\
++    - "self._${id}_config = configparser.ConfigParser()\nself._${id}_config.read(${config_file})\n\
+         if not self._${id}_config.has_section(${section}):\n\tself._${id}_config.add_section(${section})\n\
+         self._${id}_config.set(${section}, ${option}, str(${writeback}))\nself._${id}_config.write(open(${config_file},\
+         \ 'w'))"
+-- 
+2.20.1
+

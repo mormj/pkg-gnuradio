@@ -1,0 +1,26 @@
+From aeba5cc36c0e1445fc017417cbc5b92d2ff91579 Mon Sep 17 00:00:00 2001
+From: Sebastian Koslowski <sebastian.koslowski@gmail.com>
+Date: Mon, 25 May 2020 21:56:07 +0200
+Subject: [PATCH 25/32] grc: fix for legacy python
+
+replacing fstring-usage introduced in 1591d41
+---
+ grc/core/blocks/block.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/grc/core/blocks/block.py b/grc/core/blocks/block.py
+index e738e36cf7..9e4fd51345 100644
+--- a/grc/core/blocks/block.py
++++ b/grc/core/blocks/block.py
+@@ -151,7 +151,7 @@ class Block(Element):
+             # this is ok behavior, unfortunately we could be hiding other import bugs
+             pass
+         except Exception:
+-            self.add_error_message(f'Failed to evaluate import expression {imports!r}')
++            self.add_error_message("Failed to evaluate import expression {!r}".format(imports))
+ 
+     def update_bus_logic(self):
+         ###############################
+-- 
+2.20.1
+

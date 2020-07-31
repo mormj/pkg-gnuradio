@@ -1,0 +1,24 @@
+From 0f8d201bbe1186d44ca5582f877244299e1d8e17 Mon Sep 17 00:00:00 2001
+From: alekhgupta1441 <alekhgupta1441@gmail.com>
+Date: Sat, 2 May 2020 21:40:43 +0530
+Subject: [PATCH 12/32] gr-fft: fixup Log Power yml
+
+---
+ gr-fft/grc/fft_logpwrfft_x.block.yml | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/gr-fft/grc/fft_logpwrfft_x.block.yml b/gr-fft/grc/fft_logpwrfft_x.block.yml
+index 3090699a50..9b83612631 100644
+--- a/gr-fft/grc/fft_logpwrfft_x.block.yml
++++ b/gr-fft/grc/fft_logpwrfft_x.block.yml
+@@ -17,7 +17,6 @@ parameters:
+     label: FFT Size
+     dtype: int
+     default: '1024'
+-    hide: ${ 'part' if vlen == 1 else 'none' }
+ -   id: ref_scale
+     label: Reference Scale
+     dtype: real
+-- 
+2.20.1
+

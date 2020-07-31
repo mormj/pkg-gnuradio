@@ -1,0 +1,26 @@
+From dc3046459dc9fb2b4ccd1d1695699e6787faeb7c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marcus=20M=C3=BCller?= <mmueller@gnuradio.org>
+Date: Thu, 30 Apr 2020 20:46:37 +0200
+Subject: [PATCH 13/32] GRC: default to showing of block comments
+
+---
+ grc/gui/Actions.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/grc/gui/Actions.py b/grc/gui/Actions.py
+index cdc40d6b0f..e227259f77 100644
+--- a/grc/gui/Actions.py
++++ b/grc/gui/Actions.py
+@@ -432,7 +432,8 @@ TOGGLE_AUTO_HIDE_PORT_LABELS = actions.register("win.auto_hide_port_labels",
+ TOGGLE_SHOW_BLOCK_COMMENTS = actions.register("win.show_block_comments",
+     label='Show Block Comments',
+     tooltip="Show comment beneath each block",
+-    preference_name='show_block_comments'
++    preference_name='show_block_comments',
++    default=True
+ )
+ TOGGLE_SHOW_CODE_PREVIEW_TAB = actions.register("win.toggle_code_preview",
+     label='Generated Code Preview',
+-- 
+2.20.1
+

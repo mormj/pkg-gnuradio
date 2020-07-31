@@ -1,0 +1,26 @@
+From d28f4f3c57d4c312f1ab4e7b77d7ceabe557f9fd Mon Sep 17 00:00:00 2001
+From: Clayton Smith <argilo@gmail.com>
+Date: Sat, 23 May 2020 16:25:28 -0400
+Subject: [PATCH 24/32] grc: import print_function in generated flow graph
+
+---
+ grc/core/generator/flow_graph.py.mako | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/grc/core/generator/flow_graph.py.mako b/grc/core/generator/flow_graph.py.mako
+index 20617d4090..4b8e1835c1 100644
+--- a/grc/core/generator/flow_graph.py.mako
++++ b/grc/core/generator/flow_graph.py.mako
+@@ -30,6 +30,9 @@ python_version = version_info.major
+ # GNU Radio version: ${version}
+ ##################################################
+ 
++% if python_version == 2:
++from __future__ import print_function
++% endif
+ % if generate_options == 'qt_gui':
+ from distutils.version import StrictVersion
+ 
+-- 
+2.20.1
+

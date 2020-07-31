@@ -1,32 +1,99 @@
-gnuradio (3.8.0.0~gnuradio~eoan-9) eoan; urgency=medium
+gnuradio (3.8.1.0-3) unstable; urgency=medium
 
-  * gnuradio ppa Release of v3.8.0.0 for eoan
+  * update to v3.8.1.0-33-ged0f6d7dc6
+    Fix XMLRPC Client and Server block templates
 
- -- Josh Morman <mormjb@gmail.com>  Thu, 21 Nov 2019 09:42:40 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Tue, 30 Jun 2020 00:11:09 -0400
 
-gnuradio (3.8.0.0~gnuradio~eoan-8) eoan; urgency=medium
+gnuradio (3.8.1.0-2) unstable; urgency=medium
 
-  * gnuradio ppa Release of v3.8.0.0 for eoan
+  * update to v3.8.1.0-32-ga9fc5a5dd3
+  * Remove unused liborc-0.4-dev build-dep.
+  * Track boost-defaults version (Closes: #962365)
+  * Recommend python3-pyqt5.qwt (Closes: #958439)
+  * Enforce use of /usr/bin/python3 (Closes: #946274)
+  * Try tests even on i386 (Closes: #946065)
+  * Drop unneeded GTK+ 2 libcanberra-gtk*-module dependencies (Closes: #958558)
+  * Recent builds have enabled jack (Closes: #940523)
 
- -- Josh Morman <mormjb@gmail.com>  Mon, 18 Nov 2019 17:04:17 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Fri, 12 Jun 2020 20:02:59 -0400
 
-gnuradio (3.8.0.0~gnuradio~disco-6) disco; urgency=medium
+gnuradio (3.8.1.0-1) unstable; urgency=medium
 
-  * gnuradio ppa Release of v3.8.0.0 for disco
+  * Release 3.8.1.0
 
- -- Josh Morman <mormjb@gmail.com>  Tue, 12 Nov 2019 17:44:07 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Thu, 09 Apr 2020 17:30:29 -0400
 
-gnuradio (3.8.0.0~gnuradio~disco-4) disco; urgency=medium
+gnuradio (3.8.1.0~rc1-2) unstable; urgency=medium
 
-  * gnuradio ppa Release of v3.8.0.0 for disco
+  * Upload to unstable
+  * build with volk 2.2.0
 
- -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 13:44:53 -0400
+ -- A. Maitland Bottoms <bottoms@debian.org>  Tue, 18 Feb 2020 21:53:02 -0500
 
-gnuradio (3.8.0.0~368-6~bionic) bionic; urgency=medium
+gnuradio (3.8.1.0~rc1-1) experimental; urgency=medium
 
-  * Bump to GNU Radio 3.8.0.0-git version
+  * New upstream release candidate
 
- -- Andrej Rode (GNU Radio CI & Infrastructure) <arode@gnuradio.org>  Wed, 15 May 2019 10:42:12 -0700
+ -- A. Maitland Bottoms <bottoms@debian.org>  Sun, 16 Feb 2020 16:33:39 -0500
+
+gnuradio (3.8.0.0-8) unstable; urgency=medium
+
+  * update to v3.8.0.0-96-g510da612e8
+    but without volk 2.0 work-around since Debiuan has a fixed volk 2.1
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Thu, 13 Feb 2020 20:46:03 -0500
+
+gnuradio (3.8.0.0-7) unstable; urgency=medium
+
+  * update to v3.8.0.0-79-gf87f2dbab
+  * build with volk 2.1 and uhd 3.15.0.0
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Mon, 06 Jan 2020 19:19:37 -0500
+
+gnuradio (3.8.0.0-6) unstable; urgency=medium
+
+  * update to v3.8.0.0-41-g2f5c81d555
+  * gnuradio-dev depends upon libgmp-dev, thanks vorlon! (Closes: #943965)
+  * gnuradio depends upon gir1.2-gtk-3.0, thanks kc0bfv!
+    (Closes: #943778, #943864)
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Fri, 15 Nov 2019 00:05:28 -0500
+
+gnuradio (3.8.0.0-5) unstable; urgency=medium
+
+  * grcc from gnuradio 3.8 no longer adds timestamps (Closes: #914252)
+  * depend upon python3-pyqtgraph for gr_filter_design (Closes: #926790)
+  * add depends for canberra modules (Closes: #921377)
+  * Use .bcep file to keep gr_modtool template un-bytecompiled.
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Fri, 30 Aug 2019 20:21:31 -0400
+
+gnuradio (3.8.0.0-4) unstable; urgency=medium
+
+  * limit architectures for thrift availability
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Sat, 24 Aug 2019 12:25:47 -0400
+
+gnuradio (3.8.0.0-3) unstable; urgency=medium
+
+  * update to v3.8.0.0-14-gcfefe6e0ba
+  * update package references: libvolk1-bin => libvolk2-bin (Closes: #935417)
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Thu, 22 Aug 2019 20:28:52 -0400
+
+gnuradio (3.8.0.0-2) unstable; urgency=medium
+
+  * update dependencies
+  * build for Python3 (Closes: #912960, #885294)
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Mon, 12 Aug 2019 22:30:03 -0400
+
+gnuradio (3.8.0.0-1) experimental; urgency=medium
+
+  * New upstream release
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Fri, 09 Aug 2019 19:18:15 -0400
 
 gnuradio (3.7.13.4-4) unstable; urgency=medium
 

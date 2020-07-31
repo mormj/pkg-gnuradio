@@ -1,0 +1,39 @@
+From d0e5b48be03c756e42e9588d449c90b15d3237fd Mon Sep 17 00:00:00 2001
+From: Andrej Rode <mail@andrejro.de>
+Date: Sat, 6 Jun 2020 14:56:09 +0200
+Subject: [PATCH] cmake: use TIMESTAMP function to generate build_date and save
+ to cache
+
+Previously a a custom python command was used to generate the build date
+but this can be done with native CMake functions for all supported CMake
+versions.
+
+Additionally it's compatible with reproducible builds since CMake 3.8 as
+it honors SOURCE_DATE_EPOCH set in the environment variables.
+---
+ gnuradio-runtime/lib/CMakeLists.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/gnuradio-runtime/lib/CMakeLists.txt b/gnuradio-runtime/lib/CMakeLists.txt
+index 5aa90a5e1c..54eb5cd969 100644
+--- a/gnuradio-runtime/lib/CMakeLists.txt
++++ b/gnuradio-runtime/lib/CMakeLists.txt
+@@ -23,10 +23,11 @@ gr_check_hdr_n_def(sys/resource.h HAVE_SYS_RESOURCE_H)
+ ########################################################################
+ # Handle the generated constants
+ ########################################################################
+-execute_process(COMMAND ${PYTHON_EXECUTABLE} -c
+-    "import time;print(time.strftime('%a, %d %b %Y %H:%M:%S', time.gmtime()))"
+-    OUTPUT_VARIABLE BUILD_DATE OUTPUT_STRIP_TRAILING_WHITESPACE
+-)
++
++# Use TIMESTAMP to be compatible with reproducible builds
++# and put in in the cache so configure_file sees it
++string(TIMESTAMP BUILD_DATE "%a, %d %b %Y %H:%M:%S")
++set(BUILD_DATE ${BUILD_DATE} CACHE INTERNAL "Build date")
+ message(STATUS "Loading build date ${BUILD_DATE} into constants...")
+ message(STATUS "Loading version ${VERSION} into constants...")
+ 
+-- 
+2.20.1
+

@@ -1,0 +1,58 @@
+From df4ff0f569612136d3a811ed2eb7bd807310f12e Mon Sep 17 00:00:00 2001
+From: Josh Morman <mormjb@gmail.com>
+Date: Mon, 20 Apr 2020 08:22:36 -0400
+Subject: [PATCH 06/32] uhd: update examples for chooser default
+
+---
+ gr-uhd/examples/grc/uhd_fft.grc        | 1 +
+ gr-uhd/examples/grc/uhd_msg_tune.grc   | 1 +
+ gr-uhd/examples/grc/uhd_siggen_gui.grc | 2 ++
+ 3 files changed, 4 insertions(+)
+
+diff --git a/gr-uhd/examples/grc/uhd_fft.grc b/gr-uhd/examples/grc/uhd_fft.grc
+index 20bdcd58b6..ce1a38a98e 100644
+--- a/gr-uhd/examples/grc/uhd_fft.grc
++++ b/gr-uhd/examples/grc/uhd_fft.grc
+@@ -45,6 +45,7 @@ blocks:
+     label4: ''
+     labels: '[]'
+     num_opts: '4'
++    option0: RX2
+     option1: TX/RX
+     option2: J1
+     option3: J2
+diff --git a/gr-uhd/examples/grc/uhd_msg_tune.grc b/gr-uhd/examples/grc/uhd_msg_tune.grc
+index 715d74c7d2..f29416c041 100644
+--- a/gr-uhd/examples/grc/uhd_msg_tune.grc
++++ b/gr-uhd/examples/grc/uhd_msg_tune.grc
+@@ -46,6 +46,7 @@ blocks:
+     label4: ''
+     labels: '[]'
+     num_opts: '2'
++    option0: TX/RX
+     option1: RX2
+     option2: '2'
+     option3: '3'
+diff --git a/gr-uhd/examples/grc/uhd_siggen_gui.grc b/gr-uhd/examples/grc/uhd_siggen_gui.grc
+index f373c85557..a026fcbd94 100644
+--- a/gr-uhd/examples/grc/uhd_siggen_gui.grc
++++ b/gr-uhd/examples/grc/uhd_siggen_gui.grc
+@@ -66,6 +66,7 @@ blocks:
+     label4: ''
+     labels: '[]'
+     num_opts: '2'
++    option0: RX2
+     option1: TX/RX
+     option2: J1
+     option3: J2
+@@ -317,6 +318,7 @@ blocks:
+     label4: Sweep
+     labels: '[]'
+     num_opts: '5'
++    option0: '0'
+     option1: '1'
+     option2: '2'
+     option3: '3'
+-- 
+2.20.1
+

@@ -1,0 +1,583 @@
+From 3b86c6aa33d4414ac2d297351e0d99c61ed9e33f Mon Sep 17 00:00:00 2001
+From: Jacob Gilbert <mrjacobagilbert@gmail.com>
+Date: Fri, 10 Apr 2020 18:58:07 -0600
+Subject: [PATCH 09/32] zeromq: Add bind argument for message based zeromq
+ blocks.
+
+This is needed to support N:1 patterns. To avoid confusion, since this
+is probably a feature only needed by those who Know What They Are Doing,
+the option is added to the Advanced block property tab.
+---
+ gr-zeromq/grc/zeromq_pub_msg_sink.block.yml       |  8 +++++++-
+ gr-zeromq/grc/zeromq_pull_msg_source.block.yml    |  8 +++++++-
+ gr-zeromq/grc/zeromq_push_msg_sink.block.yml      |  8 +++++++-
+ gr-zeromq/grc/zeromq_rep_msg_sink.block.yml       |  8 +++++++-
+ gr-zeromq/grc/zeromq_req_msg_source.block.yml     |  8 +++++++-
+ gr-zeromq/grc/zeromq_sub_msg_source.block.yml     |  8 +++++++-
+ gr-zeromq/include/gnuradio/zeromq/pub_msg_sink.h  |  5 ++++-
+ .../include/gnuradio/zeromq/pull_msg_source.h     |  4 +++-
+ gr-zeromq/include/gnuradio/zeromq/push_msg_sink.h |  4 +++-
+ gr-zeromq/include/gnuradio/zeromq/rep_msg_sink.h  |  4 +++-
+ .../include/gnuradio/zeromq/req_msg_source.h      |  4 +++-
+ .../include/gnuradio/zeromq/sub_msg_source.h      |  4 +++-
+ gr-zeromq/lib/pub_msg_sink_impl.cc                | 15 +++++++++++----
+ gr-zeromq/lib/pub_msg_sink_impl.h                 |  2 +-
+ gr-zeromq/lib/pull_msg_source_impl.cc             | 13 +++++++++----
+ gr-zeromq/lib/pull_msg_source_impl.h              |  2 +-
+ gr-zeromq/lib/push_msg_sink_impl.cc               | 13 +++++++++----
+ gr-zeromq/lib/push_msg_sink_impl.h                |  2 +-
+ gr-zeromq/lib/rep_msg_sink_impl.cc                | 13 +++++++++----
+ gr-zeromq/lib/rep_msg_sink_impl.h                 |  2 +-
+ gr-zeromq/lib/req_msg_source_impl.cc              | 13 +++++++++----
+ gr-zeromq/lib/req_msg_source_impl.h               |  2 +-
+ gr-zeromq/lib/sub_msg_source_impl.cc              | 13 +++++++++----
+ gr-zeromq/lib/sub_msg_source_impl.h               |  2 +-
+ 24 files changed, 123 insertions(+), 42 deletions(-)
+
+diff --git a/gr-zeromq/grc/zeromq_pub_msg_sink.block.yml b/gr-zeromq/grc/zeromq_pub_msg_sink.block.yml
+index ee4e9739df..65b8cadb54 100644
+--- a/gr-zeromq/grc/zeromq_pub_msg_sink.block.yml
++++ b/gr-zeromq/grc/zeromq_pub_msg_sink.block.yml
+@@ -10,6 +10,12 @@ parameters:
+     label: Timeout (msec)
+     dtype: float
+     default: '100'
++-   id: bind
++    category: Advanced
++    label: Bind
++    dtype: bool
++    default: 'True'
++    hide: part
+ 
+ inputs:
+ -   domain: message
+@@ -18,6 +24,6 @@ inputs:
+ 
+ templates:
+     imports: from gnuradio import zeromq
+-    make: zeromq.pub_msg_sink(${address}, ${timeout})
++    make: zeromq.pub_msg_sink(${address}, ${timeout}, ${bind})
+     
+ file_format: 1
+diff --git a/gr-zeromq/grc/zeromq_pull_msg_source.block.yml b/gr-zeromq/grc/zeromq_pull_msg_source.block.yml
+index 00be80c2c2..f1672e20e2 100644
+--- a/gr-zeromq/grc/zeromq_pull_msg_source.block.yml
++++ b/gr-zeromq/grc/zeromq_pull_msg_source.block.yml
+@@ -10,6 +10,12 @@ parameters:
+     label: Timeout (msec)
+     dtype: float
+     default: '100'
++-   id: bind
++    category: Advanced
++    label: Bind
++    dtype: bool
++    default: 'False'
++    hide: part
+ 
+ outputs:
+ -   domain: message
+@@ -18,6 +24,6 @@ outputs:
+ 
+ templates:
+     imports: from gnuradio import zeromq
+-    make: zeromq.pull_msg_source(${address}, ${timeout})
++    make: zeromq.pull_msg_source(${address}, ${timeout}, ${bind})
+ 
+ file_format: 1
+diff --git a/gr-zeromq/grc/zeromq_push_msg_sink.block.yml b/gr-zeromq/grc/zeromq_push_msg_sink.block.yml
+index d1c9d8f82c..61d9f38dae 100644
+--- a/gr-zeromq/grc/zeromq_push_msg_sink.block.yml
++++ b/gr-zeromq/grc/zeromq_push_msg_sink.block.yml
+@@ -10,6 +10,12 @@ parameters:
+     label: Timeout (msec)
+     dtype: float
+     default: '100'
++-   id: bind
++    category: Advanced
++    label: Bind
++    dtype: bool
++    default: 'True'
++    hide: part
+ 
+ inputs:
+ -   domain: message
+@@ -18,6 +24,6 @@ inputs:
+ 
+ templates:
+     imports: from gnuradio import zeromq
+-    make: zeromq.push_msg_sink(${address}, ${timeout})
++    make: zeromq.push_msg_sink(${address}, ${timeout}, ${bind})
+ 
+ file_format: 1
+diff --git a/gr-zeromq/grc/zeromq_rep_msg_sink.block.yml b/gr-zeromq/grc/zeromq_rep_msg_sink.block.yml
+index d4732a705d..3c8a3b011a 100644
+--- a/gr-zeromq/grc/zeromq_rep_msg_sink.block.yml
++++ b/gr-zeromq/grc/zeromq_rep_msg_sink.block.yml
+@@ -10,6 +10,12 @@ parameters:
+     label: Timeout (msec)
+     dtype: float
+     default: '100'
++-   id: bind
++    category: Advanced
++    label: Bind
++    dtype: bool
++    default: 'True'
++    hide: part
+ 
+ inputs:
+ -   domain: message
+@@ -18,6 +24,6 @@ inputs:
+ 
+ templates:
+     imports: from gnuradio import zeromq
+-    make: zeromq.rep_msg_sink(${address}, ${timeout})
++    make: zeromq.rep_msg_sink(${address}, ${timeout}, ${bind})
+ 
+ file_format: 1
+diff --git a/gr-zeromq/grc/zeromq_req_msg_source.block.yml b/gr-zeromq/grc/zeromq_req_msg_source.block.yml
+index 81cefd573a..8277991425 100644
+--- a/gr-zeromq/grc/zeromq_req_msg_source.block.yml
++++ b/gr-zeromq/grc/zeromq_req_msg_source.block.yml
+@@ -10,6 +10,12 @@ parameters:
+     label: Timeout (msec)
+     dtype: float
+     default: '100'
++-   id: bind
++    category: Advanced
++    label: Bind
++    dtype: bool
++    default: 'False'
++    hide: part
+ 
+ outputs:
+ -   domain: message
+@@ -18,6 +24,6 @@ outputs:
+ 
+ templates:
+     imports: from gnuradio import zeromq
+-    make: zeromq.req_msg_source(${address}, ${timeout})
++    make: zeromq.req_msg_source(${address}, ${timeout}, ${bind})
+ 
+ file_format: 1
+diff --git a/gr-zeromq/grc/zeromq_sub_msg_source.block.yml b/gr-zeromq/grc/zeromq_sub_msg_source.block.yml
+index a9202d9480..8dde1520e7 100644
+--- a/gr-zeromq/grc/zeromq_sub_msg_source.block.yml
++++ b/gr-zeromq/grc/zeromq_sub_msg_source.block.yml
+@@ -10,6 +10,12 @@ parameters:
+     label: Timeout (msec)
+     dtype: float
+     default: '100'
++-   id: bind
++    category: Advanced
++    label: Bind
++    dtype: bool
++    default: 'False'
++    hide: part
+ 
+ outputs:
+ -   domain: message
+@@ -18,6 +24,6 @@ outputs:
+ 
+ templates:
+     imports: from gnuradio import zeromq
+-    make: zeromq.sub_msg_source(${address}, ${timeout})
++    make: zeromq.sub_msg_source(${address}, ${timeout}, ${bind})
+ 
+ file_format: 1
+diff --git a/gr-zeromq/include/gnuradio/zeromq/pub_msg_sink.h b/gr-zeromq/include/gnuradio/zeromq/pub_msg_sink.h
+index 768079d8c1..b52c4a42e9 100644
+--- a/gr-zeromq/include/gnuradio/zeromq/pub_msg_sink.h
++++ b/gr-zeromq/include/gnuradio/zeromq/pub_msg_sink.h
+@@ -50,8 +50,11 @@ public:
+      *
+      * \param address  ZMQ socket address specifier
+      * \param timeout  Receive timeout in milliseconds, default is 100ms, 1us increments
++     * \param bind     If true this block will bind to the address, otherwise it will
++     * connect; the default is to bind
++     *
+      */
+-    static sptr make(char* address, int timeout = 100);
++    static sptr make(char* address, int timeout = 100, bool bind = true);
+ 
+     /*!
+      * \brief Return a std::string of ZMQ_LAST_ENDPOINT from the underlying ZMQ socket.
+diff --git a/gr-zeromq/include/gnuradio/zeromq/pull_msg_source.h b/gr-zeromq/include/gnuradio/zeromq/pull_msg_source.h
+index 8d9c1eb5de..54bcca7484 100644
+--- a/gr-zeromq/include/gnuradio/zeromq/pull_msg_source.h
++++ b/gr-zeromq/include/gnuradio/zeromq/pull_msg_source.h
+@@ -47,9 +47,11 @@ public:
+      *
+      * \param address  ZMQ socket address specifier
+      * \param timeout  Receive timeout in milliseconds, default is 100ms, 1us increments
++     * \param bind     If true this block will bind to the address, otherwise it will
++     * connect; the default is to connect
+      *
+      */
+-    static sptr make(char* address, int timeout = 100);
++    static sptr make(char* address, int timeout = 100, bool bind = false);
+ 
+     /*!
+      * \brief Return a std::string of ZMQ_LAST_ENDPOINT from the underlying ZMQ socket.
+diff --git a/gr-zeromq/include/gnuradio/zeromq/push_msg_sink.h b/gr-zeromq/include/gnuradio/zeromq/push_msg_sink.h
+index db3cc61752..9ba74d5d63 100644
+--- a/gr-zeromq/include/gnuradio/zeromq/push_msg_sink.h
++++ b/gr-zeromq/include/gnuradio/zeromq/push_msg_sink.h
+@@ -49,9 +49,11 @@ public:
+      *
+      * \param address  ZMQ socket address specifier
+      * \param timeout  Receive timeout in milliseconds, default is 100ms, 1us increments
++     * \param bind     If true this block will bind to the address, otherwise it will
++     * connect; the default is to bind
+      *
+      */
+-    static sptr make(char* address, int timeout = 100);
++    static sptr make(char* address, int timeout = 100, bool bind = true);
+ 
+     /*!
+      * \brief Return a std::string of ZMQ_LAST_ENDPOINT from the underlying ZMQ socket.
+diff --git a/gr-zeromq/include/gnuradio/zeromq/rep_msg_sink.h b/gr-zeromq/include/gnuradio/zeromq/rep_msg_sink.h
+index 602dc83ffd..878c97ee3e 100644
+--- a/gr-zeromq/include/gnuradio/zeromq/rep_msg_sink.h
++++ b/gr-zeromq/include/gnuradio/zeromq/rep_msg_sink.h
+@@ -49,9 +49,11 @@ public:
+      *
+      * \param address  ZMQ socket address specifier
+      * \param timeout  Receive timeout in milliseconds, default is 100ms, 1us increments
++     * \param bind     If true this block will bind to the address, otherwise it will
++     * connect; the default is to bind
+      *
+      */
+-    static sptr make(char* address, int timeout = 100);
++    static sptr make(char* address, int timeout = 100, bool bind = true);
+ 
+     /*!
+      * \brief Return a std::string of ZMQ_LAST_ENDPOINT from the underlying ZMQ socket.
+diff --git a/gr-zeromq/include/gnuradio/zeromq/req_msg_source.h b/gr-zeromq/include/gnuradio/zeromq/req_msg_source.h
+index 7f4f5c1f10..29873b613b 100644
+--- a/gr-zeromq/include/gnuradio/zeromq/req_msg_source.h
++++ b/gr-zeromq/include/gnuradio/zeromq/req_msg_source.h
+@@ -47,9 +47,11 @@ public:
+      *
+      * \param address  ZMQ socket address specifier
+      * \param timeout  Receive timeout in milliseconds, default is 100ms, 1us increments
++     * \param bind     If true this block will bind to the address, otherwise it will
++     * connect; the default is to connect
+      *
+      */
+-    static sptr make(char* address, int timeout = 100);
++    static sptr make(char* address, int timeout = 100, bool bind = false);
+ 
+     /*!
+      * \brief Return a std::string of ZMQ_LAST_ENDPOINT from the underlying ZMQ socket.
+diff --git a/gr-zeromq/include/gnuradio/zeromq/sub_msg_source.h b/gr-zeromq/include/gnuradio/zeromq/sub_msg_source.h
+index 9f50857558..09a47c6b00 100644
+--- a/gr-zeromq/include/gnuradio/zeromq/sub_msg_source.h
++++ b/gr-zeromq/include/gnuradio/zeromq/sub_msg_source.h
+@@ -47,9 +47,11 @@ public:
+      *
+      * \param address  ZMQ socket address specifier
+      * \param timeout  Receive timeout in milliseconds, default is 100ms, 1us increments
++     * \param bind     If true this block will bind to the address, otherwise it will
++     * connect; the default is to connect
+      *
+      */
+-    static sptr make(char* address, int timeout = 100);
++    static sptr make(char* address, int timeout = 100, bool bind = false);
+ 
+     /*!
+      * \brief Return a std::string of ZMQ_LAST_ENDPOINT from the underlying ZMQ socket.
+diff --git a/gr-zeromq/lib/pub_msg_sink_impl.cc b/gr-zeromq/lib/pub_msg_sink_impl.cc
+index d8ec13043a..b5da7421ef 100644
+--- a/gr-zeromq/lib/pub_msg_sink_impl.cc
++++ b/gr-zeromq/lib/pub_msg_sink_impl.cc
+@@ -31,12 +31,12 @@
+ namespace gr {
+ namespace zeromq {
+ 
+-pub_msg_sink::sptr pub_msg_sink::make(char* address, int timeout)
++pub_msg_sink::sptr pub_msg_sink::make(char* address, int timeout, bool bind)
+ {
+-    return gnuradio::get_initial_sptr(new pub_msg_sink_impl(address, timeout));
++    return gnuradio::get_initial_sptr(new pub_msg_sink_impl(address, timeout, bind));
+ }
+ 
+-pub_msg_sink_impl::pub_msg_sink_impl(char* address, int timeout)
++pub_msg_sink_impl::pub_msg_sink_impl(char* address, int timeout, bool bind)
+     : gr::block("pub_msg_sink",
+                 gr::io_signature::make(0, 0, 0),
+                 gr::io_signature::make(0, 0, 0)),
+@@ -44,15 +44,22 @@ pub_msg_sink_impl::pub_msg_sink_impl(char* address, int timeout)
+ {
+     int major, minor, patch;
+     zmq::version(&major, &minor, &patch);
++
+     if (major < 3) {
+         d_timeout = timeout * 1000;
+     }
+ 
+     d_context = new zmq::context_t(1);
+     d_socket = new zmq::socket_t(*d_context, ZMQ_PUB);
++
+     int time = 0;
+     d_socket->setsockopt(ZMQ_LINGER, &time, sizeof(time));
+-    d_socket->bind(address);
++
++    if (bind) {
++        d_socket->bind(address);
++    } else {
++        d_socket->connect(address);
++    }
+ 
+     message_port_register_in(pmt::mp("in"));
+     set_msg_handler(pmt::mp("in"), boost::bind(&pub_msg_sink_impl::handler, this, _1));
+diff --git a/gr-zeromq/lib/pub_msg_sink_impl.h b/gr-zeromq/lib/pub_msg_sink_impl.h
+index b40a88cc8b..69ca7203e3 100644
+--- a/gr-zeromq/lib/pub_msg_sink_impl.h
++++ b/gr-zeromq/lib/pub_msg_sink_impl.h
+@@ -37,7 +37,7 @@ private:
+     zmq::socket_t* d_socket;
+ 
+ public:
+-    pub_msg_sink_impl(char* address, int timeout);
++    pub_msg_sink_impl(char* address, int timeout, bool bind);
+     ~pub_msg_sink_impl();
+ 
+     void handler(pmt::pmt_t msg);
+diff --git a/gr-zeromq/lib/pull_msg_source_impl.cc b/gr-zeromq/lib/pull_msg_source_impl.cc
+index 270e2a3c3a..1700f638bb 100644
+--- a/gr-zeromq/lib/pull_msg_source_impl.cc
++++ b/gr-zeromq/lib/pull_msg_source_impl.cc
+@@ -33,12 +33,12 @@
+ namespace gr {
+ namespace zeromq {
+ 
+-pull_msg_source::sptr pull_msg_source::make(char* address, int timeout)
++pull_msg_source::sptr pull_msg_source::make(char* address, int timeout, bool bind)
+ {
+-    return gnuradio::get_initial_sptr(new pull_msg_source_impl(address, timeout));
++    return gnuradio::get_initial_sptr(new pull_msg_source_impl(address, timeout, bind));
+ }
+ 
+-pull_msg_source_impl::pull_msg_source_impl(char* address, int timeout)
++pull_msg_source_impl::pull_msg_source_impl(char* address, int timeout, bool bind)
+     : gr::block("pull_msg_source",
+                 gr::io_signature::make(0, 0, 0),
+                 gr::io_signature::make(0, 0, 0)),
+@@ -57,7 +57,12 @@ pull_msg_source_impl::pull_msg_source_impl(char* address, int timeout)
+ 
+     int time = 0;
+     d_socket->setsockopt(ZMQ_LINGER, &time, sizeof(time));
+-    d_socket->connect(address);
++
++    if (bind) {
++        d_socket->bind(address);
++    } else {
++        d_socket->connect(address);
++    }
+ 
+     message_port_register_out(d_port);
+ }
+diff --git a/gr-zeromq/lib/pull_msg_source_impl.h b/gr-zeromq/lib/pull_msg_source_impl.h
+index 293d98da74..c714c717d8 100644
+--- a/gr-zeromq/lib/pull_msg_source_impl.h
++++ b/gr-zeromq/lib/pull_msg_source_impl.h
+@@ -43,7 +43,7 @@ private:
+ public:
+     bool d_finished;
+ 
+-    pull_msg_source_impl(char* address, int timeout);
++    pull_msg_source_impl(char* address, int timeout, bool bind);
+     ~pull_msg_source_impl();
+ 
+     bool start();
+diff --git a/gr-zeromq/lib/push_msg_sink_impl.cc b/gr-zeromq/lib/push_msg_sink_impl.cc
+index c2c6e3bf41..4140781ab9 100644
+--- a/gr-zeromq/lib/push_msg_sink_impl.cc
++++ b/gr-zeromq/lib/push_msg_sink_impl.cc
+@@ -31,12 +31,12 @@
+ namespace gr {
+ namespace zeromq {
+ 
+-push_msg_sink::sptr push_msg_sink::make(char* address, int timeout)
++push_msg_sink::sptr push_msg_sink::make(char* address, int timeout, bool bind)
+ {
+-    return gnuradio::get_initial_sptr(new push_msg_sink_impl(address, timeout));
++    return gnuradio::get_initial_sptr(new push_msg_sink_impl(address, timeout, bind));
+ }
+ 
+-push_msg_sink_impl::push_msg_sink_impl(char* address, int timeout)
++push_msg_sink_impl::push_msg_sink_impl(char* address, int timeout, bool bind)
+     : gr::block("push_msg_sink",
+                 gr::io_signature::make(0, 0, 0),
+                 gr::io_signature::make(0, 0, 0)),
+@@ -54,7 +54,12 @@ push_msg_sink_impl::push_msg_sink_impl(char* address, int timeout)
+ 
+     int time = 0;
+     d_socket->setsockopt(ZMQ_LINGER, &time, sizeof(time));
+-    d_socket->bind(address);
++
++    if (bind) {
++        d_socket->bind(address);
++    } else {
++        d_socket->connect(address);
++    }
+ 
+     message_port_register_in(pmt::mp("in"));
+     set_msg_handler(pmt::mp("in"), boost::bind(&push_msg_sink_impl::handler, this, _1));
+diff --git a/gr-zeromq/lib/push_msg_sink_impl.h b/gr-zeromq/lib/push_msg_sink_impl.h
+index ab453fc98e..64105ebf1a 100644
+--- a/gr-zeromq/lib/push_msg_sink_impl.h
++++ b/gr-zeromq/lib/push_msg_sink_impl.h
+@@ -37,7 +37,7 @@ private:
+     zmq::socket_t* d_socket;
+ 
+ public:
+-    push_msg_sink_impl(char* address, int timeout);
++    push_msg_sink_impl(char* address, int timeout, bool bind);
+     ~push_msg_sink_impl();
+ 
+     void handler(pmt::pmt_t msg);
+diff --git a/gr-zeromq/lib/rep_msg_sink_impl.cc b/gr-zeromq/lib/rep_msg_sink_impl.cc
+index c2e187ff2c..4c020d1ffd 100644
+--- a/gr-zeromq/lib/rep_msg_sink_impl.cc
++++ b/gr-zeromq/lib/rep_msg_sink_impl.cc
+@@ -31,12 +31,12 @@
+ namespace gr {
+ namespace zeromq {
+ 
+-rep_msg_sink::sptr rep_msg_sink::make(char* address, int timeout)
++rep_msg_sink::sptr rep_msg_sink::make(char* address, int timeout, bool bind)
+ {
+-    return gnuradio::get_initial_sptr(new rep_msg_sink_impl(address, timeout));
++    return gnuradio::get_initial_sptr(new rep_msg_sink_impl(address, timeout, bind));
+ }
+ 
+-rep_msg_sink_impl::rep_msg_sink_impl(char* address, int timeout)
++rep_msg_sink_impl::rep_msg_sink_impl(char* address, int timeout, bool bind)
+     : gr::block("rep_msg_sink",
+                 gr::io_signature::make(0, 0, 0),
+                 gr::io_signature::make(0, 0, 0)),
+@@ -55,7 +55,12 @@ rep_msg_sink_impl::rep_msg_sink_impl(char* address, int timeout)
+ 
+     int time = 0;
+     d_socket->setsockopt(ZMQ_LINGER, &time, sizeof(time));
+-    d_socket->bind(address);
++
++    if (bind) {
++        d_socket->bind(address);
++    } else {
++        d_socket->connect(address);
++    }
+ 
+     message_port_register_in(d_port);
+ }
+diff --git a/gr-zeromq/lib/rep_msg_sink_impl.h b/gr-zeromq/lib/rep_msg_sink_impl.h
+index 3042c42939..bf4757f380 100644
+--- a/gr-zeromq/lib/rep_msg_sink_impl.h
++++ b/gr-zeromq/lib/rep_msg_sink_impl.h
+@@ -43,7 +43,7 @@ private:
+     void readloop();
+ 
+ public:
+-    rep_msg_sink_impl(char* address, int timeout);
++    rep_msg_sink_impl(char* address, int timeout, bool bind);
+     ~rep_msg_sink_impl();
+ 
+     bool start();
+diff --git a/gr-zeromq/lib/req_msg_source_impl.cc b/gr-zeromq/lib/req_msg_source_impl.cc
+index 882a48d687..0c4f09bf6d 100644
+--- a/gr-zeromq/lib/req_msg_source_impl.cc
++++ b/gr-zeromq/lib/req_msg_source_impl.cc
+@@ -33,12 +33,12 @@
+ namespace gr {
+ namespace zeromq {
+ 
+-req_msg_source::sptr req_msg_source::make(char* address, int timeout)
++req_msg_source::sptr req_msg_source::make(char* address, int timeout, bool bind)
+ {
+-    return gnuradio::get_initial_sptr(new req_msg_source_impl(address, timeout));
++    return gnuradio::get_initial_sptr(new req_msg_source_impl(address, timeout, bind));
+ }
+ 
+-req_msg_source_impl::req_msg_source_impl(char* address, int timeout)
++req_msg_source_impl::req_msg_source_impl(char* address, int timeout, bool bind)
+     : gr::block("req_msg_source",
+                 gr::io_signature::make(0, 0, 0),
+                 gr::io_signature::make(0, 0, 0)),
+@@ -57,7 +57,12 @@ req_msg_source_impl::req_msg_source_impl(char* address, int timeout)
+ 
+     int time = 0;
+     d_socket->setsockopt(ZMQ_LINGER, &time, sizeof(time));
+-    d_socket->connect(address);
++
++    if (bind) {
++        d_socket->bind(address);
++    } else {
++        d_socket->connect(address);
++    }
+ 
+     message_port_register_out(d_port);
+ }
+diff --git a/gr-zeromq/lib/req_msg_source_impl.h b/gr-zeromq/lib/req_msg_source_impl.h
+index 8287960372..c863aa57d8 100644
+--- a/gr-zeromq/lib/req_msg_source_impl.h
++++ b/gr-zeromq/lib/req_msg_source_impl.h
+@@ -43,7 +43,7 @@ private:
+ public:
+     bool d_finished;
+ 
+-    req_msg_source_impl(char* address, int timeout);
++    req_msg_source_impl(char* address, int timeout, bool bind);
+     ~req_msg_source_impl();
+ 
+     bool start();
+diff --git a/gr-zeromq/lib/sub_msg_source_impl.cc b/gr-zeromq/lib/sub_msg_source_impl.cc
+index 330c9327a8..d9cb914941 100644
+--- a/gr-zeromq/lib/sub_msg_source_impl.cc
++++ b/gr-zeromq/lib/sub_msg_source_impl.cc
+@@ -33,12 +33,12 @@
+ namespace gr {
+ namespace zeromq {
+ 
+-sub_msg_source::sptr sub_msg_source::make(char* address, int timeout)
++sub_msg_source::sptr sub_msg_source::make(char* address, int timeout, bool bind)
+ {
+-    return gnuradio::get_initial_sptr(new sub_msg_source_impl(address, timeout));
++    return gnuradio::get_initial_sptr(new sub_msg_source_impl(address, timeout, bind));
+ }
+ 
+-sub_msg_source_impl::sub_msg_source_impl(char* address, int timeout)
++sub_msg_source_impl::sub_msg_source_impl(char* address, int timeout, bool bind)
+     : gr::block("sub_msg_source",
+                 gr::io_signature::make(0, 0, 0),
+                 gr::io_signature::make(0, 0, 0)),
+@@ -56,7 +56,12 @@ sub_msg_source_impl::sub_msg_source_impl(char* address, int timeout)
+     d_socket = new zmq::socket_t(*d_context, ZMQ_SUB);
+ 
+     d_socket->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+-    d_socket->connect(address);
++
++    if (bind) {
++        d_socket->bind(address);
++    } else {
++        d_socket->connect(address);
++    }
+ 
+     message_port_register_out(d_port);
+ }
+diff --git a/gr-zeromq/lib/sub_msg_source_impl.h b/gr-zeromq/lib/sub_msg_source_impl.h
+index 8d760c0ad0..50f7beb3c1 100644
+--- a/gr-zeromq/lib/sub_msg_source_impl.h
++++ b/gr-zeromq/lib/sub_msg_source_impl.h
+@@ -43,7 +43,7 @@ private:
+ public:
+     bool d_finished;
+ 
+-    sub_msg_source_impl(char* address, int timeout);
++    sub_msg_source_impl(char* address, int timeout, bool bind);
+     ~sub_msg_source_impl();
+ 
+     bool start();
+-- 
+2.20.1
+

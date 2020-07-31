@@ -1,0 +1,51 @@
+From 1ba373bb31c23c11e458ef6a35e156206f5ae4f2 Mon Sep 17 00:00:00 2001
+From: rear1019 <rear1019@posteo.de>
+Date: Sun, 29 Mar 2020 11:04:24 +0200
+Subject: [PATCH 01/32] file_sink: Flush file on stop()
+
+Make sure that data passed to the file sink is written to the disk when
+the flowgraph is stopped. Before this change this only happened
+implicitly due to a fclose() in the base class destructor. This in turn
+means that data was written delayed after stopping the flowgraph [1].
+
+This fixes #2590.
+
+[1] https://github.com/gnuradio/gnuradio/issues/2590
+---
+ gr-blocks/lib/file_sink_impl.cc | 7 +++++++
+ gr-blocks/lib/file_sink_impl.h  | 2 ++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/gr-blocks/lib/file_sink_impl.cc b/gr-blocks/lib/file_sink_impl.cc
+index 0f49138359..4d4746f842 100644
+--- a/gr-blocks/lib/file_sink_impl.cc
++++ b/gr-blocks/lib/file_sink_impl.cc
+@@ -79,5 +79,12 @@ int file_sink_impl::work(int noutput_items,
+     return nwritten;
+ }
+ 
++bool file_sink_impl::stop()
++{
++    do_update();
++    fflush(d_fp);
++    return true;
++}
++
+ } /* namespace blocks */
+ } /* namespace gr */
+diff --git a/gr-blocks/lib/file_sink_impl.h b/gr-blocks/lib/file_sink_impl.h
+index 3671aab540..fab226bf5d 100644
+--- a/gr-blocks/lib/file_sink_impl.h
++++ b/gr-blocks/lib/file_sink_impl.h
+@@ -40,6 +40,8 @@ public:
+     int work(int noutput_items,
+              gr_vector_const_void_star& input_items,
+              gr_vector_void_star& output_items);
++
++    bool stop() override;
+ };
+ 
+ } /* namespace blocks */
+-- 
+2.20.1
+
