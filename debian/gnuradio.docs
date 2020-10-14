@@ -19,7 +19,6 @@ gr-channels/docs/README.channels
 dtools/README
 gr-uhd/docs/README.uhd
 gr-digital/docs/README.digital
-docs/doxygen/README.doxyxml
 gr-blocks/docs/README.blocks
 gr-filter/lib/gen_interpolator_taps/README
 gr-filter/docs/README.filter
