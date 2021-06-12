@@ -1,56 +1,117 @@
-gnuradio (3.9.0.0git~master~13593~eoan-4) eoan; urgency=medium
+gnuradio (3.9.2.0-1) experimental; urgency=medium
 
-  * master at 5f18a419e2cec9f46d67147cae957d304d7a0195 blocks: file_meta_sink header size error handling logic error
+  * New upstream release
 
- -- Josh Morman <mormjb@gmail.com>  Tue, 25 Feb 2020 14:33:59 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Thu, 10 Jun 2021 19:51:53 -0400
 
-gnuradio (3.9.0.0git~master~13383~eoan) eoan; urgency=medium
+gnuradio (3.9.0.0-2) experimental; urgency=medium
 
-  * master at c24b15b48dbf0487ae8f8d4fc1c2570a23b6b28c grc: add send_flowgraph_error_report to Messages
+  * bump CMAKE_CXX_STANDARD 17
 
- -- Josh Morman <mormjb@gmail.com>  Thu, 19 Dec 2019 14:23:02 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Mon, 18 Jan 2021 10:48:04 -0500
 
-gnuradio (3.9.0.0git~master~13370~eoan) eoan; urgency=medium
+gnuradio (3.9.0.0-1) experimental; urgency=medium
 
-  * master at 6414c7c642ab79aa2e96d2e3b394856470cc1444 Merge pull request #2729 from hughpyle/master
+  * New upstream release
 
- -- Josh Morman <mormjb@gmail.com>  Wed, 04 Dec 2019 09:04:29 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Sun, 17 Jan 2021 19:30:58 -0500
 
-gnuradio (3.9.0.0git~master~13366~eoan) eoan; urgency=medium
+gnuradio (3.9.0.0~rc2-1) experimental; urgency=medium
 
-  * master at 9bd441ed1ed326ae46ae6e0313394d8af3f33ba2 Document the statistical distribution that is used to simulate impulse noise.
+  * New upstream release candidate
 
- -- Josh Morman <mormjb@gmail.com>  Thu, 21 Nov 2019 09:39:18 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Thu, 07 Jan 2021 16:22:20 -0500
 
-gnuradio (3.9.0.0git~master~13365~eoan) eoan; urgency=medium
+gnuradio (3.9~rc0-1) experimental; urgency=medium
 
-  * master at c86dd3515ceebe361f19d027d95b661e5e7dc432 grc: remove deprecated encoding argument from json.loads
+  * v3.8.0.0-845-g592dfc78a aka 3.9.0.RC0 from new maint-3.9 branch
+    pybind11 branch merged onto master
+    Headed toward a 3.9 release.
 
- -- Josh Morman <mormjb@gmail.com>  Mon, 18 Nov 2019 17:05:44 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Wed, 23 Dec 2020 12:40:17 -0500
 
-gnuradio (3.9.0.0git~master~13363~disco) disco; urgency=medium
+gnuradio (3.8.1.0~pybind-1) unstable; urgency=medium
 
-  * master at f78c95897ec696f208d2bc089c9fdc9e6367903d put back checks for io.h in cmake files #2874
+  * New upstream branch
 
- -- Josh Morman <mormjb@gmail.com>  Thu, 14 Nov 2019 09:02:29 -0500
+ -- A. Maitland Bottoms <bottoms@debian.org>  Sat, 30 May 2020 19:46:02 -0400
 
-gnuradio (3.9.0.0git~master~13357~disco) disco; urgency=medium
+gnuradio (3.8.1.0-1) unstable; urgency=medium
 
-  * master at 218d2c2029a8c4557906bbe55a56292f568f0910 Module name correction for bokehgui
+  * Release 3.8.1.0
 
- -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 13:34:22 -0400
+ -- A. Maitland Bottoms <bottoms@debian.org>  Thu, 09 Apr 2020 17:30:29 -0400
 
-gnuradio (3.9.0.0git~master~13355) disco; urgency=medium
+gnuradio (3.8.1.0~rc1-2) unstable; urgency=medium
 
-  * master at 6fb5f919f0b3cff13e3eb161c73340fed17cf4b9 add set_max_output_buffer to block gateway
+  * Upload to unstable
+  * build with volk 2.2.0
 
- -- Josh Morman <mormjb@gmail.com>  Fri, 01 Nov 2019 11:17:02 -0400
+ -- A. Maitland Bottoms <bottoms@debian.org>  Tue, 18 Feb 2020 21:53:02 -0500
 
-gnuradio (3.8.0.0~368-6~bionic) bionic; urgency=medium
+gnuradio (3.8.1.0~rc1-1) experimental; urgency=medium
 
-  * Bump to GNU Radio 3.8.0.0-git version
+  * New upstream release candidate
 
- -- Andrej Rode (GNU Radio CI & Infrastructure) <arode@gnuradio.org>  Wed, 15 May 2019 10:42:12 -0700
+ -- A. Maitland Bottoms <bottoms@debian.org>  Sun, 16 Feb 2020 16:33:39 -0500
+
+gnuradio (3.8.0.0-8) unstable; urgency=medium
+
+  * update to v3.8.0.0-96-g510da612e8
+    but without volk 2.0 work-around since Debiuan has a fixed volk 2.1
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Thu, 13 Feb 2020 20:46:03 -0500
+
+gnuradio (3.8.0.0-7) unstable; urgency=medium
+
+  * update to v3.8.0.0-79-gf87f2dbab
+  * build with volk 2.1 and uhd 3.15.0.0
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Mon, 06 Jan 2020 19:19:37 -0500
+
+gnuradio (3.8.0.0-6) unstable; urgency=medium
+
+  * update to v3.8.0.0-41-g2f5c81d555
+  * gnuradio-dev depends upon libgmp-dev, thanks vorlon! (Closes: #943965)
+  * gnuradio depends upon gir1.2-gtk-3.0, thanks kc0bfv!
+    (Closes: #943778, #943864)
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Fri, 15 Nov 2019 00:05:28 -0500
+
+gnuradio (3.8.0.0-5) unstable; urgency=medium
+
+  * grcc from gnuradio 3.8 no longer adds timestamps (Closes: #914252)
+  * depend upon python3-pyqtgraph for gr_filter_design (Closes: #926790)
+  * add depends for canberra modules (Closes: #921377)
+  * Use .bcep file to keep gr_modtool template un-bytecompiled.
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Fri, 30 Aug 2019 20:21:31 -0400
+
+gnuradio (3.8.0.0-4) unstable; urgency=medium
+
+  * limit architectures for thrift availability
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Sat, 24 Aug 2019 12:25:47 -0400
+
+gnuradio (3.8.0.0-3) unstable; urgency=medium
+
+  * update to v3.8.0.0-14-gcfefe6e0ba
+  * update package references: libvolk1-bin => libvolk2-bin (Closes: #935417)
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Thu, 22 Aug 2019 20:28:52 -0400
+
+gnuradio (3.8.0.0-2) unstable; urgency=medium
+
+  * update dependencies
+  * build for Python3 (Closes: #912960, #885294)
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Mon, 12 Aug 2019 22:30:03 -0400
+
+gnuradio (3.8.0.0-1) experimental; urgency=medium
+
+  * New upstream release
+
+ -- A. Maitland Bottoms <bottoms@debian.org>  Fri, 09 Aug 2019 19:18:15 -0400
 
 gnuradio (3.7.13.4-4) unstable; urgency=medium
 

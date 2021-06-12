@@ -6,15 +6,22 @@ export DEB_HOST_MULTIARCH
 	dh $@ --with python3
 
 override_dh_auto_configure:
-	dh_auto_configure -- -DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)" -DPYTHON_EXECUTABLE:STRING="/usr/bin/python3" -DENABLE_INTERNAL_VOLK=OFF -DENABLE_PYTHON=ON
+	dh_auto_configure -- -DCMAKE_BUILD_TYPE=Release -DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)"
+#	dh_auto_configure -- -DENABLE_INTERNAL_VOLK=OFF -DPYTHON_EXECUTABLE="/usr/bin/python3" -DCMAKE_BUILD_TYPE=Release
 
 override_dh_python3:
 	dh_python3 --no-ext-rename
 
+override_dh_auto_install:
+	rm -rf debian/tmp/usr/share/doc/gnuradio-doc/xml/License.xml.gz
+	dh_auto_install
+	rm -f  debian/gnuradio/usr/share/doc/gnuradio/html/*md5
+	rm -f  debian/gnuradio-doc/usr/share/doc/gnuradio-doc/html/*md5
+
 override_dh_auto_test:
 	mkdir debian/test
 	mkdir debian/test/.gnuradio
-	- if case "$(DEB_BUILD_ARCH)" in *"i386"*) false;; *) true;; esac; then HOME=$(CURDIR)/debian/test dh_auto_test -- ARGS+='--timeout 10 -E systematic' ; fi
+	- if case "$(DEB_BUILD_ARCH)" in *"i386"*) false;; *) true;; esac; then HOME=$(CURDIR)/debian/test dh_auto_test -- --output-on-failure ; fi
 	rm -rf debian/test
 
 override_dh_acc:
@@ -24,3 +31,6 @@ override_dh_acc:
 override_dh_installmime:
 	dh_installmime
 	rm -f debian/gnuradio/usr/share/mime/packages/gnuradio.xml
+
+override_dh_gencontrol:
+	dh_gencontrol -- -Vboost-version=`dpkg-query -W -f='$${Depends}' libboost-date-time-dev| cut -b19- |cut -b-4`

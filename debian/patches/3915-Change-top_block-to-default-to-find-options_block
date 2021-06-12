@@ -1,0 +1,16 @@
+From 1f2981ab7f0057417ddbc8c1e79096080c5b22d2 Mon Sep 17 00:00:00 2001
+From: Jared Dulmage <jared.dulmage@caliola.com>
+Date: Sat, 31 Oct 2020 04:00:38 +0000
+Subject: [PATCH] Change "top_block" to "default" to find options_block
+
+--- a/grc/gui/Application.py
++++ b/grc/gui/Application.py
+@@ -317,7 +317,7 @@
+             flow_graph.move_selected(coords)
+ 
+             # Set flow graph to heir block type
+-            top_block = flow_graph.get_block("top_block")
++            top_block = flow_graph.get_block("default")
+             top_block.params['generate_options'].set_value('hb')
+ 
+             # this needs to be a unique name

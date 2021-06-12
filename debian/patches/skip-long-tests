@@ -1,0 +1,20 @@
+--- a/gr-fec/python/fec/CMakeLists.txt
++++ b/gr-fec/python/fec/CMakeLists.txt
+@@ -52,6 +52,17 @@
+     )
+ endif(NOT GSL_FOUND)
+ 
++# These take too many resources on build machines
++list(REMOVE_ITEM py_qa_test_files
++  ${CMAKE_CURRENT_SOURCE_DIR}/qa_polar_decoder_sc_systematic.py
++  )
++list(REMOVE_ITEM py_qa_test_files
++  ${CMAKE_CURRENT_SOURCE_DIR}/qa_polar_decoder_systematic.py
++  )
++list(REMOVE_ITEM py_qa_test_files
++  ${CMAKE_CURRENT_SOURCE_DIR}/qa_polar_encoder_systematic.py
++  )
++
+ foreach(py_qa_test_file ${py_qa_test_files})
+     get_filename_component(py_qa_test_name ${py_qa_test_file} NAME_WE)
+     GR_ADD_TEST(${py_qa_test_name} ${QA_PYTHON_EXECUTABLE} -B ${py_qa_test_file})
