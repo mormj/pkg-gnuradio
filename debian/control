@@ -26,26 +26,25 @@ Build-Depends: cmake,
                libgsl-dev (>= 2.0),
                libgsm1-dev,
                libjack-jackd2-dev,
+	       libjs-mathjax,
                liblog4cpp5-dev,
-               liborc-0.4-dev,
-               libpangocairo-1.0-0,
-               libportaudio2,
                libpulse-dev,
 	       libqwt-qt5-dev,
                libsdl1.2-dev,
                libsndfile1-dev,
-	       libthrift-dev [amd64 arm64 armel armhf i386],
-               libuhd-dev (>=3.13.1) [!hurd-i386],
+	       libsoapysdr-dev,
+	       libthrift-dev (>= 0.13.0-5) [amd64 arm64 armel armhf i386],
+               libuhd-dev,
                libusb-1.0-0-dev [!kfreebsd-any],
                libusb2-dev [kfreebsd-any],
-	       libvolk2-dev,
+	       libvolk2-dev (>=2.3.0),
                libxi-dev,
                libxrender-dev,
                libzmq3-dev [!hurd-i386] | libzmq-dev [!hurd-i386],
 	       ninja-build,
                pkg-config,
                portaudio19-dev,
-            pybind11-dev (>=2.4.3),
+	       pybind11-dev,
 	       python3-click,
 	       python3-click-plugins,
                python3-dev,
@@ -55,25 +54,26 @@ Build-Depends: cmake,
                python3-mako,
                python3-numpy,
                python3-opengl,
+	       python3-pygccxml,
 	       python3-pyqt5 [!hurd-i386],
                python3-scipy,
+	       python3-thrift [amd64 arm64 armel armhf i386 mips64el mipsel ppc64el riscv64 s390x],
 	       python3-yaml,
                python3-zmq [!hurd-i386],
-            python3-six,
 	       qt5-qmake,
 	       qtbase5-dev,
 	       qttools5-dev,
-	       thrift-compiler [amd64 arm64 armel armhf i386],
+	       thrift-compiler [amd64 arm64 armel armhf i386 mips64el mipsel ppc64el riscv64 s390x],
                xmlto
-Standards-Version: 4.4.0
-Homepage: http://gnuradio.org/
-Vcs-Browser: https://github.com/gnuradio/pkg-gnuradio
-Vcs-Git: https://github.com/gnuradio/pkg-gnuradio.git
+Standards-Version: 4.5.1
+Rules-Requires-Root: no
+Homepage: https://www.gnuradio.org/
+Vcs-Browser: https://salsa.debian.org/bottoms/pkg-gnuradio
+Vcs-Git: https://salsa.debian.org/bottoms/pkg-gnuradio.git
 
 Package: gnuradio
 Architecture: any
-Depends: libcanberra-gtk-module,
-	 libcanberra-gtk3-module,
+Depends: libjs-mathjax,
 	 libvolk2-bin,
 	 python3-click,
 	 python3-click-plugins,
@@ -86,6 +86,7 @@ Depends: libcanberra-gtk-module,
 	 python3-pyqt5 [!hurd-i386],
 	 python3-pyqtgraph,
          python3-sip,
+	 python3-thrift [amd64 arm64 armel armhf i386 mips64el mipsel ppc64el riscv64 s390x],
 	 python3-yaml,
          python3-zmq [!hurd-i386],
          ${misc:Depends},
@@ -94,9 +95,10 @@ Depends: libcanberra-gtk-module,
 Recommends: gnuradio-dev,
             python3-matplotlib,
 	    python3-networkx,
-            python3-qwt-qt5,
+            python3-pyqt5.qwt,
             python3-scipy,
             rtl-sdr,
+	    soapysdr-tools,
             uhd-host
 Suggests: gr-fosphor, gr-osmosdr
 Multi-Arch: foreign
@@ -153,9 +155,11 @@ Depends: gnuradio (= ${binary:Version}),
          libgsm1-dev,
          liblog4cpp5-dev,
          libvolk2-dev,
+	 pybind11-dev,
          python3-dev,
+	 libthrift-dev [amd64 arm64 armel armhf i386],
          ${misc:Depends}
-Suggests: cmake, qtbase5-dev, libqwt-qt5-dev, pkg-config, pybind11-dev
+Suggests: cmake, qtbase5-dev, libqwt-qt5-dev, pkg-config
 Description: GNU Software Defined Radio toolkit development
  Header files for the GNU Radio software defined radio system.
  Since GNU Radio is a framework for development of SDR
@@ -272,8 +276,10 @@ Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Multi-Arch: same
-Description: gnuradio network transport functions
- Library for network transport, TCP, UDP functions.
+Description: gnuradio network library
+ Library of  blocks that implement UDP and TCP source and
+ sink blocks supporting both IPv4 and IPv6.
+ Part of the main gnuradio build.
 
 Package: libgnuradio-pmt
 Section: libs
@@ -308,6 +314,16 @@ Multi-Arch: same
 Description: gnuradio core runtime
  Top level component library. Defines core blocks. Handles
  settings for logging, performance counters, and control port.
+ Part of the main gnuradio build.
+
+Package: libgnuradio-soapy
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Multi-Arch: same
+Description: gnuradio SoapySDR support
+ Soapy hardware drivers using the SoapySDR driver framework.
  Part of the main gnuradio build.
 
 Package: libgnuradio-trellis

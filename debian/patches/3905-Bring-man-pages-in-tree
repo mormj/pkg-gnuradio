@@ -1,0 +1,881 @@
+From db0880898022363a9575a76d3e1e28607f87766e Mon Sep 17 00:00:00 2001
+From: David Pi <david.pinho@gmail.com>
+Date: Sat, 31 Oct 2020 15:05:52 +0000
+Subject: [PATCH] Bring man pages in-tree from project gnuradio/pkg_gnuradio
+
+- Put man pages in man/docs and give them a .in extension
+- Replace version and date placeholders at cmake configure time
+- Improve gnuradio-companion man page, expanding description and
+  updating options
+- Remove help2man generated man pages, and man pages for non-existent
+  commands
+---
+ CMakeLists.txt                           |  1 +
+ docs/CMakeLists.txt                      | 12 ++---
+ docs/man/CMakeLists.txt                  | 47 +++++++++++++++++
+ docs/man/dial_tone.1.in                  | 15 ++++++
+ docs/man/display_qt.1.in                 | 12 +++++
+ docs/man/gnuradio-companion.1.in         | 27 ++++++++++
+ docs/man/gnuradio-config-info.1.in       | 33 ++++++++++++
+ docs/man/gr-ctrlport-monitor.1.in        | 39 ++++++++++++++
+ docs/man/gr-perf-monitorx.1.in           |  1 +
+ docs/man/gr_filter_design.1.in           | 12 +++++
+ docs/man/gr_modtool.1.in                 | 16 ++++++
+ docs/man/gr_plot_const.1.in              | 28 ++++++++++
+ docs/man/gr_plot_fft.1.in                | 37 ++++++++++++++
+ docs/man/gr_plot_iq.1.in                 | 28 ++++++++++
+ docs/man/gr_plot_psd.1.in                | 49 ++++++++++++++++++
+ docs/man/gr_plot_qt.1.in                 |  7 +++
+ docs/man/gr_plot_time.1.in               | 39 ++++++++++++++
+ docs/man/gr_read_file_metadata.1.in      | 15 ++++++
+ docs/man/grcc.1.in                       | 10 ++++
+ docs/man/polar_channel_construction.1.in | 25 +++++++++
+ docs/man/tags_demo.1.in                  | 34 +++++++++++++
+ docs/man/uhd_fft.1.in                    |  9 ++++
+ docs/man/uhd_rx_cfile.1.in               | 45 ++++++++++++++++
+ docs/man/uhd_rx_nogui.1.in               | 49 ++++++++++++++++++
+ docs/man/uhd_siggen.1.in                 | 65 ++++++++++++++++++++++++
+ docs/man/uhd_siggen_gui.1.in             | 65 ++++++++++++++++++++++++
+ 26 files changed, 714 insertions(+), 6 deletions(-)
+ create mode 100644 docs/man/CMakeLists.txt
+ create mode 100644 docs/man/dial_tone.1.in
+ create mode 100644 docs/man/display_qt.1.in
+ create mode 100644 docs/man/gnuradio-companion.1.in
+ create mode 100644 docs/man/gnuradio-config-info.1.in
+ create mode 100644 docs/man/gr-ctrlport-monitor.1.in
+ create mode 100644 docs/man/gr-perf-monitorx.1.in
+ create mode 100644 docs/man/gr_filter_design.1.in
+ create mode 100644 docs/man/gr_modtool.1.in
+ create mode 100644 docs/man/gr_plot_const.1.in
+ create mode 100644 docs/man/gr_plot_fft.1.in
+ create mode 100644 docs/man/gr_plot_iq.1.in
+ create mode 100644 docs/man/gr_plot_psd.1.in
+ create mode 100644 docs/man/gr_plot_qt.1.in
+ create mode 100644 docs/man/gr_plot_time.1.in
+ create mode 100644 docs/man/gr_read_file_metadata.1.in
+ create mode 100644 docs/man/grcc.1.in
+ create mode 100644 docs/man/polar_channel_construction.1.in
+ create mode 100644 docs/man/tags_demo.1.in
+ create mode 100644 docs/man/uhd_fft.1.in
+ create mode 100644 docs/man/uhd_rx_cfile.1.in
+ create mode 100644 docs/man/uhd_rx_nogui.1.in
+ create mode 100644 docs/man/uhd_siggen.1.in
+ create mode 100644 docs/man/uhd_siggen_gui.1.in
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -234,6 +234,7 @@
+ SET(GR_PKG_DATA_DIR    ${GR_DATA_DIR}/${CMAKE_PROJECT_NAME} CACHE PATH "Path to install package data")
+ SET(GR_DOC_DIR         ${GR_DATA_DIR}/doc CACHE PATH "Path to install documentation")
+ SET(GR_PKG_DOC_DIR     ${GR_DOC_DIR}/${CMAKE_PROJECT_NAME}-${DOCVER} CACHE PATH "Path to install package docs")
++SET(GR_MAN_DIR         ${GR_DATA_DIR}/man CACHE PATH "Path to install man pages")
+ SET(GR_LIBEXEC_DIR     libexec CACHE PATH "Path to install libexec files")
+ SET(GR_PKG_LIBEXEC_DIR ${GR_LIBEXEC_DIR}/${CMAKE_PROJECT_NAME} CACHE PATH "Path to install package libexec files")
+ SET(GRC_BLOCKS_DIR     ${GR_PKG_DATA_DIR}/grc/blocks CACHE PATH "Path to install GRC blocks")
+--- a/docs/CMakeLists.txt
++++ b/docs/CMakeLists.txt
+@@ -12,19 +12,19 @@
+ find_package(MathJax2)
+ 
+ ########################################################################
+-# Register component
++# Register components
+ ########################################################################
+ include(GrComponent)
+ GR_REGISTER_COMPONENT("doxygen" ENABLE_DOXYGEN DOXYGEN_FOUND)
++GR_REGISTER_COMPONENT("man-pages" ENABLE_MANPAGES)
+ 
+ ########################################################################
+ # Begin conditional configuration
+ ########################################################################
+ if(ENABLE_DOXYGEN)
+-
+-########################################################################
+-# Add subdirectories
+-########################################################################
+ add_subdirectory(doxygen)
+-
+ endif(ENABLE_DOXYGEN)
++
++if(ENABLE_MANPAGES)
++add_subdirectory(man)
++endif(ENABLE_MANPAGES)
+--- /dev/null
++++ b/docs/man/CMakeLists.txt
+@@ -0,0 +1,47 @@
++# Copyright 2011 Free Software Foundation, Inc.
++#
++# This file is part of GNU Radio
++#
++# SPDX-License-Identifier: GPL-3.0-or-later
++#
++
++########################################################################
++# Man pages
++########################################################################
++
++set(MAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
++set(MAN_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
++
++list(APPEND manpages
++     dial_tone.1
++     display_qt.1
++     gnuradio-companion.1
++     gnuradio-config-info.1
++     grcc.1
++     gr-ctrlport-monitor.1
++     gr_filter_design.1
++     gr_modtool.1
++     gr-perf-monitorx.1
++     gr_plot_const.1
++     gr_plot_fft.1
++     gr_plot_iq.1
++     gr_plot_psd.1
++     gr_plot_qt.1
++     gr_plot_time.1
++     gr_read_file_metadata.1
++     polar_channel_construction.1
++     tags_demo.1
++     uhd_fft.1
++     uhd_rx_cfile.1
++     uhd_rx_nogui.1
++     uhd_siggen.1
++     uhd_siggen_gui.1
++)
++
++foreach(manpage ${manpages})
++    configure_file(${MAN_SRC_DIR}/${manpage}.in ${MAN_BUILD_DIR}/${manpage} @ONLY)
++    install(FILES
++       ${MAN_BUILD_DIR}/${manpage}
++       DESTINATION ${GR_MAN_DIR}/man1
++    )
++endforeach(manpage)
+--- /dev/null
++++ b/docs/man/dial_tone.1.in
+@@ -0,0 +1,15 @@
++.TH DIAL_TONE "1" "@BUILD_DATE_SHORT@" "DIAL_TONE @VERSION@" "User Commands"
++.SH NAME
++dial_tone \- dial tone example
++.SH DESCRIPTION
++GnuRadio Dial Tone example
++.SH OPTIONS
++None
++.PP
++Play a Dial Tone on the sound card output device.
++.SH "SEE ALSO"
++.PP
++The c++ gnuradio example programs are in /usr/bin. There are also many
++Python and GnuRadio Companion examples in /usr/share/gnuradio/examples/...
++.PP
++tags_demo(1) uhd_rx_cfile(1) uhd_rx_nogui(1) uhd_siggen(1) uhd_siggen_gui(1)
+--- /dev/null
++++ b/docs/man/display_qt.1.in
+@@ -0,0 +1,12 @@
++.TH DISPLAY_QT "1" "@BUILD_DATE_SHORT@" "display_qt @VERSION@" "User Commands"
++.SH NAME
++display_qt \- a Gnu Radio Example gr-qtgui
++.SH DESCRIPTION
++Display a GUI using QT of a sine wave in noise.
++.PP
++Example program instantiates a GNU Radio flow graph using a sine
++wave source, a noise source, and gr-qtgui blocks. This
++new (in version 3.7.10) example shows how to build a
++C++ only QT based application.
++.SH "SEE ALSO"
++http://gnuradio.squarespace.com/examples/tag/qt
+--- /dev/null
++++ b/docs/man/gnuradio-companion.1.in
+@@ -0,0 +1,27 @@
++.TH GNURADIO-COMPANION "1" "@BUILD_DATE_SHORT@" "GNU Radio Companion @VERSION@" "User Commands"
++.\"
++.SH NAME
++gnuradio-companion \- GNU Radio Companion (GRC) is a graphical tool for creating GNU Radio signal flowgraphs.
++.\"
++.SH SYNOPSIS
++\fBgnuradio-companion\fP [\fIoptions\fP] [\fIflowgraphs\fP]
++.\"
++.SH DESCRIPTION
++.PP
++GNU Radio is a free & open-source software development toolkit that provides signal processing blocks to implement software-defined radios and signal-processing systems. The GNU Radio applications themselves are generally known as "flowgraphs", which are a series of signal processing blocks connected together, thus describing a data flow.
++.PP
++\fBgnuradio-companion\fP is effectively a Python code-generation tool. When a flowgraph is "compiled" in GRC, it generates Python code that creates the desired GUI windows and widgets, and creates and connects the blocks in the flowgraph.
++.\"
++.SH OPTIONS
++\fIflowgraphs\fP Invoke the program with one or more existing flowgraphs.
++.\"
++.TP
++\fB\-h\fP, \fB\-\-help\fP
++show a help message and exit.
++.TP
++\fB\-\-log\fP
++defines the level of logging output.
++.\"
++.SH SEE ALSO
++https://wiki.gnuradio.org/index.php/GNURadioCompanion
++
+--- /dev/null
++++ b/docs/man/gnuradio-config-info.1.in
+@@ -0,0 +1,33 @@
++.TH GNURADIO-CONFIG-INFO "1" "@BUILD_DATE_SHORT@" "gnuradio-config-info @VERSION@" "User Commands"
++.SH NAME
++gnuradio-config-info \- show details on installed GNU radio
++.SH DESCRIPTION
++.SS "Program options: gnuradio [options]:"
++.TP
++\fB\-h\fR [ \fB\-\-help\fR ]
++print help message
++.TP
++\fB\-\-prefix\fR
++print gnuradio installation prefix
++.TP
++\fB\-\-sysconfdir\fR
++print gnuradio system configuration directory
++.TP
++\fB\-\-prefsdir\fR
++print gnuradio preferences directory
++.TP
++\fB\-\-builddate\fR
++print gnuradio build date (RFC2822 format)
++.TP
++\fB\-v\fR [ \fB\-\-version\fR ]
++print gnuradio version
++.SH "SEE ALSO"
++The full documentation for
++.B GNU Radio
++is in HTML format.  If the
++.B gnuradio-doc
++package is properly installed at your site
++.IP
++.B /usr/share/doc/gnuradio-doc/html/
++.PP
++should give you access to the complete manual.
+--- /dev/null
++++ b/docs/man/gr-ctrlport-monitor.1.in
+@@ -0,0 +1,39 @@
++.TH GR-CTRLPORT-MONITOR "1" "@BUILD_DATE_SHORT@" "GNU Radio Companion @VERSION@" "User Commands"
++.SH NAME
++gr-ctrlport-monitor \- gnuradio control port gui
++.SH SYNOPSIS
++.B gr-ctrlport-monitor
++[\fIoptions\fR]
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-H\fR HOST, \fB\-\-host\fR=\fIHOST\fR
++Hostname of ControlPort server.
++.TP
++\fB\-p\fR PORT, \fB\-\-port\fR=\fIPORT\fR
++Port number of host's ControlPort endpoint.
++.TP
++\fB\-i\fR INTERFACES, \fB\-\-interfaces\fR=\fIINTERFACES\fR
++Interfaces to use. [default=['lo']]
++.TP
++\fB\-P\fR PROTOCOL, \fB\-\-protocol\fR=\fIPROTOCOL\fR
++Type of protocol to use (usually tcp). [default=tcp]
++.TP
++\fB\-a\fR APP, \fB\-\-app\fR=\fIAPP\fR
++Name of application [default=gnuradio]
++.PP
++gr\-ctrlport\-monitor: error: no such option: \fB\-\-version\fR
++.SH "SEE ALSO"
++The full documentation for
++.B Usage:
++is maintained as a Texinfo manual.  If the
++.B info
++and
++.B Usage:
++programs are properly installed at your site, the command
++.IP
++.B info Usage:
++.PP
++should give you access to the complete manual.
+--- /dev/null
++++ b/docs/man/gr-perf-monitorx.1.in
+@@ -0,0 +1 @@
++.so man1/gr-ctrlport-monitor.1
+--- /dev/null
++++ b/docs/man/gr_filter_design.1.in
+@@ -0,0 +1,12 @@
++.TH GR_FILTER_DESIGN "1" "@BUILD_DATE_SHORT@" "gr_filter_design @VERSION@" "User Commands"
++.SH NAME
++gr_filter_design \- GUI for creating filters for GNU Radio
++.SH SYNOPSIS
++.B gr_filter_design:
++[\fIoptions\fR] \fI(input_filename)\fR
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.SH "SEE ALSO"
++gnuradio-companion(1)
+--- /dev/null
++++ b/docs/man/gr_modtool.1.in
+@@ -0,0 +1,16 @@
++.TH GNURADIO "1" "@BUILD_DATE_SHORT@" "gr_modtool @VERSION@" "User Commands"
++.SH NAME
++gr-modtool \- The swiss army knife of module editing
++.SH DESCRIPTION
++When developing a module, there's a lot of boring, monotonous work
++involved: boilerplate code, makefile editing etc. gr-modtool is a
++script which aims to help with all these things by automatically
++editing makefiles, using templates and doing as much work as possible
++for the developer, such that you can jump straight into the DSP
++coding.
++.P
++Note that gr-modtool makes a lot of assumptions on what the code looks
++like. The more your module is custom and has specific changes, the
++less useful gr-modtool becomes.
++.SH SEE ALSO
++https://wiki.gnuradio.org/index.php/OutOfTreeModules
+--- /dev/null
++++ b/docs/man/gr_plot_const.1.in
+@@ -0,0 +1,28 @@
++.TH GR_PLOT_CONST "1" "@BUILD_DATE_SHORT@" "gr_plot_const @VERSION@" "User Commands"
++.SH NAME
++gr_plot_const \- constellation plot of I&Q data using GNU Radio
++.SH SYNOPSIS
++.B gr_plot_const:
++[\fIoptions\fR] \fIinput_filename\fR
++.SH DESCRIPTION
++Takes a GNU Radio complex binary file and displays the I&Q data versus time
++and the constellation plot (I vs. Q). You can set the block size to specify
++how many points to read in at a time and the start position in the file. By
++default, the system assumes a sample rate of 1, so in time, each sample is
++plotted versus the sample number. To set a true time axis, set the sample rate
++(\fB\-R\fR or \fB\-\-sample\-rate\fR) to the sample rate used when capturing the samples.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-B\fR BLOCK, \fB\-\-block\fR=\fIBLOCK\fR
++Specify the block size [default=1000]
++.TP
++\fB\-s\fR START, \fB\-\-start\fR=\fISTART\fR
++Specify where to start in the file [default=0]
++.TP
++\fB\-R\fR SAMPLE_RATE, \fB\-\-sample\-rate\fR=\fISAMPLE_RATE\fR
++Set the sampler rate of the data [default=1.0]
++.SH "SEE ALSO"
++gr_plot_char(1)  gr_plot_const(1)  gr_plot_fft_c(1)  gr_plot_fft_f(1)  gr_plot_fft.py(1)  gr_plot_float(1)  gr_plot_int(1)  gr_plot_iq(1)  gr_plot_psd_c(1)  gr_plot_psd_f(1)  gr_plot_qt(1)  gr_plot_short(1)
+--- /dev/null
++++ b/docs/man/gr_plot_fft.1.in
+@@ -0,0 +1,37 @@
++.TH GR_PLOT_FFT "1" "@BUILD_DATE_SHORT@" "gr_plot_fft @VERSION@" "User Commands"
++.SH NAME
++gr_plot_fft \- Frequency domain GNU Radio plotting
++.SH SYNOPSIS
++.B gr_plot_fft:
++[\fIoptions\fR] \fIinput_filename\fR
++.SH DESCRIPTION
++Takes a GNU Radio complex binary file and displays the I&Q data versus time as
++well as the frequency domain (FFT) plot. The y\-axis values are plotted
++assuming volts as the amplitude of the I&Q streams and converted into dBm in
++the frequency domain (the 1/N power adjustment out of the FFT is performed
++internally). The script plots a certain block of data at a time, specified on
++the command line as \fB\-B\fR or \fB\-\-block\fR. This value defaults to 1000. The start
++position in the file can be set by specifying \fB\-s\fR or \fB\-\-start\fR and defaults to 0
++(the start of the file). By default, the system assumes a sample rate of 1, so
++in time, each sample is plotted versus the sample number. To set a true time
++and frequency axis, set the sample rate (\fB\-R\fR or \fB\-\-sample\-rate\fR) to the sample
++rate used when capturing the samples.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-d\fR DATA_TYPE, \fB\-\-data\-type\fR=\fIDATA_TYPE\fR
++Specify the data type (complex64, float32, (u)int32,
++(u)int16, (u)int8) [default=complex64]
++.TP
++\fB\-B\fR BLOCK, \fB\-\-block\fR=\fIBLOCK\fR
++Specify the block size [default=1000]
++.TP
++\fB\-s\fR START, \fB\-\-start\fR=\fISTART\fR
++Specify where to start in the file [default=0]
++.TP
++\fB\-R\fR SAMPLE_RATE, \fB\-\-sample\-rate\fR=\fISAMPLE_RATE\fR
++Set the sampler rate of the data [default=1.0]
++.SH "SEE ALSO"
++gr_plot_fft_c(1) gr_plot_fft_f(1)
+--- /dev/null
++++ b/docs/man/gr_plot_iq.1.in
+@@ -0,0 +1,28 @@
++.TH GR_PLOT_IQ "1" "@BUILD_DATE_SHORT@" "gr_plot_iq @VERSION@" "User Commands"
++.SH NAME
++gr_plot_iq \- plot complex binary I&Q data versus time using GNU Radio
++.SH SYNOPSIS
++.B gr_plot_iq.py:
++[\fIoptions\fR] \fIinput_filename\fR
++.SH DESCRIPTION
++Takes a GNU Radio complex binary file and displays the I&Q data versus time.
++You can set the block size to specify how many points to read in at a time and
++the start position in the file. By default, the system assumes a sample rate
++of 1, so in time, each sample is plotted versus the sample number. To set a
++true time axis, set the sample rate (\fB\-R\fR or \fB\-\-sample\-rate\fR) to the sample rate
++used when capturing the samples.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-B\fR BLOCK, \fB\-\-block\fR=\fIBLOCK\fR
++Specify the block size [default=1000]
++.TP
++\fB\-s\fR START, \fB\-\-start\fR=\fISTART\fR
++Specify where to start in the file [default=0]
++.TP
++\fB\-R\fR SAMPLE_RATE, \fB\-\-sample\-rate\fR=\fISAMPLE_RATE\fR
++Set the sampler rate of the data [default=1.0]
++.SH "SEE ALSO"
++gr_plot_char(1)  gr_plot_const(1)  gr_plot_fft_c(1)  gr_plot_fft_f(1)  gr_plot_float(1)  gr_plot_int(1)  gr_plot_iq(1)  gr_plot_psd_c(1)  gr_plot_psd_f(1)  gr_plot_qt(1)  gr_plot_short(1)
+--- /dev/null
++++ b/docs/man/gr_plot_psd.1.in
+@@ -0,0 +1,49 @@
++.TH GR_PLOT_PSD "1" "@BUILD_DATE_SHORT@" "gr_plot_psd @VERSION@" "User Commands"
++.SH NAME
++gr_plot_psd \- GNU Radio power spectrum plotting
++.SH SYNOPSIS
++.B gr_plot_psd:
++[\fIoptions\fR] \fIinput_filename\fR
++.SH DESCRIPTION
++Takes a GNU Radio binary file (with specified data type using \fB\-\-data\-type\fR) and
++displays the I&Q data versus time as well as the power spectral density (PSD)
++plot. The y\-axis values are plotted assuming volts as the amplitude of the I&Q
++streams and converted into dBm in the frequency domain (the 1/N power
++adjustment out of the FFT is performed internally). The script plots a certain
++block of data at a time, specified on the command line as \fB\-B\fR or \fB\-\-block\fR. The
++start position in the file can be set by specifying \fB\-s\fR or \fB\-\-start\fR and defaults
++to 0 (the start of the file). By default, the system assumes a sample rate of
++1, so in time, each sample is plotted versus the sample number. To set a true
++time and frequency axis, set the sample rate (\fB\-R\fR or \fB\-\-sample\-rate\fR) to the
++sample rate used when capturing the samples. Finally, the size of the FFT to
++use for the PSD and spectrogram plots can be set independently with \fB\-\-psd\-size\fR
++and \fB\-\-spec\-size\fR, respectively. The spectrogram plot does not display by
++default and is turned on with \fB\-S\fR or \fB\-\-enable\-spec\fR.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-d\fR DATA_TYPE, \fB\-\-data\-type\fR=\fIDATA_TYPE\fR
++Specify the data type (complex64, float32, (u)int32,
++(u)int16, (u)int8) [default=complex64]
++.TP
++\fB\-B\fR BLOCK, \fB\-\-block\fR=\fIBLOCK\fR
++Specify the block size [default=8192]
++.TP
++\fB\-s\fR START, \fB\-\-start\fR=\fISTART\fR
++Specify where to start in the file [default=0]
++.TP
++\fB\-R\fR SAMPLE_RATE, \fB\-\-sample\-rate\fR=\fISAMPLE_RATE\fR
++Set the sampler rate of the data [default=1.0]
++.TP
++\fB\-\-psd\-size\fR=\fIPSD_SIZE\fR
++Set the size of the PSD FFT [default=1024]
++.TP
++\fB\-\-spec\-size\fR=\fISPEC_SIZE\fR
++Set the size of the spectrogram FFT [default=256]
++.TP
++\fB\-S\fR, \fB\-\-enable\-spec\fR
++Turn on plotting the spectrogram [default=False]
++.SH "SEE ALSO"
++gr_plot_psd_c(1) gr_plot_psd_f(1)
+--- /dev/null
++++ b/docs/man/gr_plot_qt.1.in
+@@ -0,0 +1,7 @@
++.TH GR_PLOT_QT "1" "@BUILD_DATE_SHORT@" "gr_plot_qt @VERSION@" "User Commands"
++.SH NAME
++gr_plot_qt \- plot data using Qt graphics and GNU Radio
++.SH DESCRIPTION
++Fancy plot display.
++.SH "SEE ALSO"
++gr_plot_char(1)  gr_plot_const(1)  gr_plot_fft_c(1)  gr_plot_fft_f(1)  gr_plot_float(1)  gr_plot_int(1)  gr_plot_iq(1)  gr_plot_psd_c(1)  gr_plot_psd_f(1)  gr_plot_qt(1)  gr_plot_short(1)
+--- /dev/null
++++ b/docs/man/gr_plot_time.1.in
+@@ -0,0 +1,39 @@
++.TH GR_PLOT_TIME "1" "@BUILD_DATE_SHORT@" "GNU Radio Companion @VERSION@" "User Commands"
++.SH NAME
++gr_plot_time \- gnuradio time domain plotting applications
++.SH SYNOPSIS
++.B gr_plot_time
++[\fIoptions\fR]
++.SH DESCRIPTION
++Plots a list of files on a scope plot. Files are a binary list of complex
++floats.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-N\fR NSAMPLES, \fB\-\-nsamples\fR=\fINSAMPLES\fR
++Set the number of samples to display [default=1000000]
++.TP
++\fB\-S\fR START, \fB\-\-start\fR=\fISTART\fR
++Starting sample number [default=0]
++.TP
++\fB\-r\fR SAMPLE_RATE, \fB\-\-sample\-rate\fR=\fISAMPLE_RATE\fR
++Set the sample rate of the signal [default=1.0]
++.TP
++\fB\-\-no\-auto\-scale\fR
++Do not auto\-scale the plot [default=False]
++.PP
++gr_plot_time: error: no such option: \fB\-\-version\fR
++.SH "SEE ALSO"
++The full documentation for
++.B Usage:
++is maintained as a Texinfo manual.  If the
++.B info
++and
++.B Usage:
++programs are properly installed at your site, the command
++.IP
++.B info Usage:
++.PP
++should give you access to the complete manual.
+--- /dev/null
++++ b/docs/man/gr_read_file_metadata.1.in
+@@ -0,0 +1,15 @@
++.TH GR_READ_FILE_METADATA "1" "@BUILD_DATE_SHORT@" "gr_read_file_metadata @VERSION@" "User Commands"
++.SH NAME
++gr_read_file_metatdata \- a Gnu Radio Utility
++.SH DESCRIPTION
++Read in a GNU Radio file with meta data, extracts the header and prints it.
++.PP
++Metadata file source and sink blocks (Tom Rondeau)
++.PP
++Two new blocks implement enhanced file source and sink blocks that
++incorporate metadata passed using the stream tags feature in GNU
++Radio. It is now possible to store things like frequency and
++sample rate into capture files, or whatever key/value pairs you
++tag onto data streams inside a flowgraph.
++.SH "SEE ALSO"
++http://www.trondeau.com/home/2012/12/15/metadata-file-format.html
+--- /dev/null
++++ b/docs/man/grcc.1.in
+@@ -0,0 +1,10 @@
++.TH GRCC "1" "@BUILD_DATE_SHORT@" "grcc @VERSION@" "User Commands"
++.SH NAME
++grcc \- Gnu Radio Companion Compiler
++.SH DESCRIPTION
++Just compile a gnuradio companion flowgraph without invoking the gui.
++.PP
++Given an input GRC file and an output directory, create a runnable
++application in the output directory.
++.SH "SEE ALSO"
++gnuradio-companion(1)
+--- /dev/null
++++ b/docs/man/polar_channel_construction.1.in
+@@ -0,0 +1,25 @@
++.TH POLAR_CHANNEL_CONSTRUCTION "1" "@BUILD_DATE_SHORT@" "polar_channel_construction @VERSION@" "User Commands"
++.SH NAME
++polar_channel_construction \- Gnu Radio Polar Configurator
++.SH DESCRIPTION
++POLAR code channel construction.
++.PP
++.SH Channel Construction
++\fBpolar_channel_construction\fR exposes functionality to calculate polar channels for different sizes.
++It may be used to calculate Bhattacharyya parameters once and store them in a file in '~/.gnuradio/polar'.
++Frozen bit positions are recalculated on every run.
++.PP
++\fBpolar_channel_construction\fR provides a command-line interface for all the channel construction code.
++These features are also accessible via the Polar Configurator block in GRC.
++.SH BEC
++BEC channel construction can be calculated explicitly because the BEC represents a special case which simplifies the task.
++All functionality regarding this channel is located in 'channel_construction_bec'.
++.SH AWGN
++In general channel construction for polar codes is a very time consuming task.
++Tal and Vardy proposed a quantization algorithm for channel construction which makes it feasible.
++The corresponding implementation is located in 'channel_construction_awgn'.
++It should be noted that this more of a baseline implementation which lacks all the advanced features the original implementation provides.
++However, simulations show that BEC channel construction with a design-SNR of 0.0dB yields similar performance and should be preferred here.
++
++.SH "SEE ALSO"
++gnuradio-companion(1)
+--- /dev/null
++++ b/docs/man/tags_demo.1.in
+@@ -0,0 +1,34 @@
++.TH TAGS_DEMO "1" "@BUILD_DATE_SHORT@" "TAGS_DEMO @VERSION@" "User Commands"
++.SH NAME
++tags_demo \- GNURadio and UHD tags example
++.SH DESCRIPTION
++Show source timestamps and demonstrate timed bursts on a sink.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-\-addr\fR
++the device address in string format
++.TP
++\fB\-\-rate\fR
++the sample rate in samples per second (default=1000000)
++.TP
++\fB\-\-freq\fR
++the center frequency in Hz (defaualt=1000000)
++.TP
++\fB\-\-burst\fR
++the duration of each burst in seconds (defaualt=0.10000000000000001)
++.TP
++\fB\-\-idle\fR
++idle time between bursts in seconds (defaualt=0.050000000000000003)
++.PP
++The tags sink demo block will print USRP source time stamps.
++The tags source demo block will send bursts to the USRP sink.
++Look at the USRP output on a scope to see the timed bursts.
++.SH "SEE ALSO"
++.PP
++The c++ gnuradio example programs are in /usr/bin. There are also many
++Python and GnuRadio Companion examples in /usr/share/gnuradio/examples/...
++.PP
++dial_tone(1) uhd_rx_nogui(1) uhd_siggen(1) uhd_siggen_gui(1)
+--- /dev/null
++++ b/docs/man/uhd_fft.1.in
+@@ -0,0 +1,9 @@
++.TH UHD_FFT "1" "@BUILD_DATE_SHORT@" "uhd_fft @VERSION@" "User Commands"
++.SH NAME
++uhd_fft \- Display spectrum from UHD receiver
++.SH DESCRIPTION
++Show received signal spectrum
++.PP
++Unable to access the X Display, is $DISPLAY set properly?
++.SH "SEE ALSO"
++uhd_rx_cfile(1) uhd_rx_nogui(1) uhd_siggen(1) uhd_siggen_gui(1)
+--- /dev/null
++++ b/docs/man/uhd_rx_cfile.1.in
+@@ -0,0 +1,45 @@
++.TH UHD_RX_CFILE "1" "@BUILD_DATE_SHORT@" "uhd_rx_cfile @VERSION@" "User Commands"
++.SH NAME
++uhd_rx_cfile \- Save UHD received data
++.SH SYNOPSIS
++.B uhd_rx_cfile:
++[\fIoptions\fR] \fIoutput_filename\fR
++.SH DESCRIPTION
++Save I&Q data to a complex file for later use.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-a\fR ARGS, \fB\-\-args\fR=\fIARGS\fR
++UHD device address args , [default=]
++.TP
++\fB\-\-spec\fR=\fISPEC\fR
++Subdevice of UHD device where appropriate
++.TP
++\fB\-A\fR ANTENNA, \fB\-\-antenna\fR=\fIANTENNA\fR
++select Rx Antenna where appropriate
++.TP
++\fB\-\-samp\-rate\fR=\fISAMP_RATE\fR
++set sample rate (bandwidth) [default=1000000.0]
++.TP
++\fB\-f\fR FREQ, \fB\-\-freq\fR=\fIFREQ\fR
++set frequency to FREQ
++.TP
++\fB\-g\fR GAIN, \fB\-\-gain\fR=\fIGAIN\fR
++set gain in dB (default is midpoint)
++.TP
++\fB\-s\fR, \fB\-\-output\-shorts\fR
++output interleaved shorts instead of complex floats
++.TP
++\fB\-N\fR NSAMPLES, \fB\-\-nsamples\fR=\fINSAMPLES\fR
++number of samples to collect [default=+inf]
++.TP
++\fB\-v\fR, \fB\-\-verbose\fR
++verbose output
++.TP
++\fB\-\-lo\-offset\fR=\fILO_OFFSET\fR
++set daughterboard LO offset to OFFSET [default=hw
++default]
++.SH "SEE ALSO"
++uhd_fft(1) uhd_rx_nogui(1) uhd_siggen(1) uhd_siggen_gui(1)
+--- /dev/null
++++ b/docs/man/uhd_rx_nogui.1.in
+@@ -0,0 +1,49 @@
++.TH UHD_RX_NOGUI "1" "@BUILD_DATE_SHORT@" "uhd_rx_nogui @VERSION@" "User Commands"
++.SH NAME
++uhd_rx_nogui \- GNU Radio receiver
++.SH SYNOPSIS
++.B uhd_rx_nogui.py
++[\fIoptions\fR]
++.SH DESCRIPTION
++Command line GNU Radio receiver that takes signal from a UHD
++peripheral receiver and sends demodulated audio to the sound device.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-a\fR ARGS, \fB\-\-args\fR=\fIARGS\fR
++UHD device address args , [default=]
++.TP
++\fB\-\-spec\fR=\fISPEC\fR
++Subdevice of UHD device where appropriate
++.TP
++\fB\-A\fR ANTENNA, \fB\-\-antenna\fR=\fIANTENNA\fR
++select Rx Antenna where appropriate [default=none]
++.TP
++\fB\-f\fR Hz, \fB\-\-frequency\fR=\fIHz\fR
++set receive frequency to Hz [default=none]
++.TP
++\fB\-c\fR Hz, \fB\-\-calibration\fR=\fIHz\fR
++set frequency offset to Hz [default=0.0]
++.TP
++\fB\-g\fR dB, \fB\-\-gain\fR=\fIdB\fR
++set RF gain [default is midpoint]
++.TP
++\fB\-m\fR TYPE, \fB\-\-modulation\fR=\fITYPE\fR
++set modulation type (AM,FM) [default=none]
++.TP
++\fB\-o\fR RATE, \fB\-\-output\-rate\fR=\fIRATE\fR
++set audio output rate to RATE [default=32000]
++.TP
++\fB\-r\fR dB, \fB\-\-rf\-squelch\fR=\fIdB\fR
++set RF squelch to dB [default=\-50.0]
++.TP
++\fB\-p\fR FREQ, \fB\-\-ctcss\fR=\fIFREQ\fR
++set CTCSS squelch to FREQ [default=none]
++.TP
++\fB\-O\fR AUDIO_OUTPUT, \fB\-\-audio\-output\fR=\fIAUDIO_OUTPUT\fR
++pcm device name.  E.g., hw:0,0 or surround51 or
++/dev/dsp
++.SH "SEE ALSO"
++uhd_fft(1) uhd_rx_cfile(1) uhd_siggen(1) uhd_siggen_gui(1)
+--- /dev/null
++++ b/docs/man/uhd_siggen.1.in
+@@ -0,0 +1,65 @@
++.TH UHD_SIGGEN "1" "@BUILD_DATE_SHORT@" "uhd_siggen @VERSION@" "User Commands"
++.SH NAME
++uhd_siggen \- Signal Generator using UHD hardware
++.SH SYNOPSIS
++.B uhd_siggen:
++[\fIoptions\fR]
++.SH DESCRIPTION
++Command-line signal generator application.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-a\fR ARGS, \fB\-\-args\fR=\fIARGS\fR
++UHD device address args , [default=]
++.TP
++\fB\-\-spec\fR=\fISPEC\fR
++Subdevice of UHD device where appropriate
++.TP
++\fB\-A\fR ANTENNA, \fB\-\-antenna\fR=\fIANTENNA\fR
++select Rx Antenna where appropriate
++.TP
++\fB\-s\fR SAMP_RATE, \fB\-\-samp\-rate\fR=\fISAMP_RATE\fR
++set sample rate (bandwidth) [default=1000000.0]
++.TP
++\fB\-g\fR GAIN, \fB\-\-gain\fR=\fIGAIN\fR
++set gain in dB (default is midpoint)
++.TP
++\fB\-f\fR FREQ, \fB\-\-tx\-freq\fR=\fIFREQ\fR
++Set carrier frequency to FREQ [default=mid\-point]
++.TP
++\fB\-x\fR WAVEFORM_FREQ, \fB\-\-waveform\-freq\fR=\fIWAVEFORM_FREQ\fR
++Set baseband waveform frequency to FREQ [default=0]
++.TP
++\fB\-y\fR WAVEFORM2_FREQ, \fB\-\-waveform2\-freq\fR=\fIWAVEFORM2_FREQ\fR
++Set 2nd waveform frequency to FREQ [default=none]
++.TP
++\fB\-\-sine\fR
++Generate a carrier modulated by a complex sine wave
++.TP
++\fB\-\-const\fR
++Generate a constant carrier
++.TP
++\fB\-\-offset\fR=\fIOFFSET\fR
++Set waveform phase offset to OFFSET [default=0]
++.TP
++\fB\-\-gaussian\fR
++Generate Gaussian random output
++.TP
++\fB\-\-uniform\fR
++Generate Uniform random output
++.TP
++\fB\-\-2tone\fR
++Generate Two Tone signal for IMD testing
++.TP
++\fB\-\-sweep\fR
++Generate a swept sine wave
++.TP
++\fB\-\-amplitude\fR=\fIAMPL\fR
++Set output amplitude to AMPL (0.0\-1.0) [default=0.15]
++.TP
++\fB\-v\fR, \fB\-\-verbose\fR
++Use verbose console output [default=False]
++.SH "SEE ALSO"
++uhd_siggen_gui(1)
+--- /dev/null
++++ b/docs/man/uhd_siggen_gui.1.in
+@@ -0,0 +1,65 @@
++.TH UHD_SIGGEN_GUI "1" "@BUILD_DATE_SHORT@" "uhd_siggen_gui @VERSION@" "User Commands"
++.SH NAME
++uhd_siggen_gui \- GNU Radio signal generator using UHD hardware
++.SH SYNOPSIS
++.B uhd_siggen_gui:
++[\fIoptions\fR]
++.SH DESCRIPTION
++GUI to allow UHD supported hardware to be a signal generator.
++.SH OPTIONS
++.TP
++\fB\-h\fR, \fB\-\-help\fR
++show this help message and exit
++.TP
++\fB\-a\fR ARGS, \fB\-\-args\fR=\fIARGS\fR
++UHD device address args , [default=]
++.TP
++\fB\-\-spec\fR=\fISPEC\fR
++Subdevice of UHD device where appropriate
++.TP
++\fB\-A\fR ANTENNA, \fB\-\-antenna\fR=\fIANTENNA\fR
++select Rx Antenna where appropriate
++.TP
++\fB\-s\fR SAMP_RATE, \fB\-\-samp\-rate\fR=\fISAMP_RATE\fR
++set sample rate (bandwidth) [default=1000000.0]
++.TP
++\fB\-g\fR GAIN, \fB\-\-gain\fR=\fIGAIN\fR
++set gain in dB (default is midpoint)
++.TP
++\fB\-f\fR FREQ, \fB\-\-tx\-freq\fR=\fIFREQ\fR
++Set carrier frequency to FREQ [default=mid\-point]
++.TP
++\fB\-x\fR WAVEFORM_FREQ, \fB\-\-waveform\-freq\fR=\fIWAVEFORM_FREQ\fR
++Set baseband waveform frequency to FREQ [default=0]
++.TP
++\fB\-y\fR WAVEFORM2_FREQ, \fB\-\-waveform2\-freq\fR=\fIWAVEFORM2_FREQ\fR
++Set 2nd waveform frequency to FREQ [default=none]
++.TP
++\fB\-\-sine\fR
++Generate a carrier modulated by a complex sine wave
++.TP
++\fB\-\-const\fR
++Generate a constant carrier
++.TP
++\fB\-\-offset\fR=\fIOFFSET\fR
++Set waveform phase offset to OFFSET [default=0]
++.TP
++\fB\-\-gaussian\fR
++Generate Gaussian random output
++.TP
++\fB\-\-uniform\fR
++Generate Uniform random output
++.TP
++\fB\-\-2tone\fR
++Generate Two Tone signal for IMD testing
++.TP
++\fB\-\-sweep\fR
++Generate a swept sine wave
++.TP
++\fB\-\-amplitude\fR=\fIAMPL\fR
++Set output amplitude to AMPL (0.0\-1.0) [default=0.15]
++.TP
++\fB\-v\fR, \fB\-\-verbose\fR
++Use verbose console output [default=False]
++.SH "SEE ALSO"
++uhd_siggen(1)

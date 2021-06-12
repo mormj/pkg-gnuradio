@@ -1,1 +1,6 @@
+3905-Bring-man-pages-in-tree
+3915-Change-top_block-to-default-to-find-options_block
 usr-bin-examples
+fix-pkg-config
+skip-long-tests
+cxx17

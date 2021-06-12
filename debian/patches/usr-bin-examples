@@ -1,6 +1,6 @@
 --- a/gr-audio/examples/c++/CMakeLists.txt
 +++ b/gr-audio/examples/c++/CMakeLists.txt
-@@ -23,5 +23,5 @@
+@@ -11,5 +11,5 @@
  
  INSTALL(TARGETS
      dial_tone
@@ -9,7 +9,7 @@
  )
 --- a/gr-qtgui/examples/c++/CMakeLists.txt
 +++ b/gr-qtgui/examples/c++/CMakeLists.txt
-@@ -45,5 +45,5 @@
+@@ -33,5 +33,5 @@
  
  INSTALL(TARGETS
    display_qt
@@ -18,7 +18,7 @@
  )
 --- a/gr-uhd/examples/c++/CMakeLists.txt
 +++ b/gr-uhd/examples/c++/CMakeLists.txt
-@@ -25,5 +25,5 @@
+@@ -13,5 +13,5 @@
  
  INSTALL(TARGETS
      tags_demo
