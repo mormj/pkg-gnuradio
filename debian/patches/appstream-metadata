@@ -40,7 +40,7 @@
 +  </provides>
 +
 +  <releases>
-+    <release version="3.8.2.0" date="2020-04-09">
++    <release version="3.8.3.1" date="2020-04-09">
 +      <description>
 +        <p>Many small fixes and example updates.</p>
 +      </description>
