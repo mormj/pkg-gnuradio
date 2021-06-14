@@ -1,4 +1,4 @@
 usr-bin-examples
 fix-pkg-config
-# appstream-metadata
+appstream-metadata
 cmake-use-TIMESTAMP-function-to-generate-build_date
